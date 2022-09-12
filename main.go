@@ -41,10 +41,40 @@ var (
 			Name:        "list-purge-candidates",
 			Description: "Lists all the people who would be affected by a purge.",
 		},
+		{
+			Name:        "is-user-admin",
+			Description: "Checks whether the user has the Manage Server permission",
+		},
+		{
+			Name:        "test-dm-requester",
+			Description: "Sends a DM to the person requesting the command.",
+		},
 	}
 
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
 		"list-purge-candidates": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			ok, err := hasPermissions(i, s, discordgo.PermissionViewAuditLogs|discordgo.PermissionManageRoles)
+			if err != nil {
+				log.Println("Error checking permissions.")
+			}
+
+			if !ok {
+				s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+					Type: discordgo.InteractionResponseChannelMessageWithSource,
+					Data: &discordgo.InteractionResponseData{
+						Content: "You're not STAFF",
+					},
+				})
+				return
+			} else {
+				s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+					Type: discordgo.InteractionResponseChannelMessageWithSource,
+					Data: &discordgo.InteractionResponseData{
+						Content: "Processing",
+					},
+				})
+			}
+
 			g, err := s.State.Guild(*GuildID)
 			if err != nil {
 				log.Panicf("Unable to get Guild %v: %v", *GuildID, err)
@@ -148,6 +178,54 @@ var (
 				},
 			})
 		},
+		"is-user-admin": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			ok, err := hasPermissions(i, s, discordgo.PermissionViewAuditLogs|discordgo.PermissionManageRoles)
+			if err != nil {
+				log.Println("Error checking permissions.")
+			}
+
+			if !ok {
+				s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+					Type: discordgo.InteractionResponseChannelMessageWithSource,
+					Data: &discordgo.InteractionResponseData{
+						Content: "You're not STAFF",
+					},
+				})
+			} else {
+				s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+					Type: discordgo.InteractionResponseChannelMessageWithSource,
+					Data: &discordgo.InteractionResponseData{
+						Content: "You're STAFF, yaaay",
+					},
+				})
+			}
+		},
+		"test-dm-requester": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			ok, err := hasPermissions(i, s, discordgo.PermissionViewAuditLogs|discordgo.PermissionManageRoles)
+			if err != nil {
+				log.Println("Error checking permissions.")
+			}
+
+			if !ok {
+				s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+					Type: discordgo.InteractionResponseChannelMessageWithSource,
+					Data: &discordgo.InteractionResponseData{
+						Content: "You're not STAFF",
+					},
+				})
+				return
+			}
+
+			dmChannel, _ := s.UserChannelCreate(i.Member.User.ID)
+			_, _ = s.ChannelMessageSend(dmChannel.ID, "SOME BLOODY FUCKING MESSAGE")
+
+			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData{
+					Content: "Sent you a DM :wink:",
+				},
+			})
+		},
 	}
 )
 
@@ -190,4 +268,18 @@ func main() {
 	<-stop
 
 	log.Printf("Gracefully shutting down.")
+}
+
+func hasPermissions(i *discordgo.InteractionCreate, s *discordgo.Session, permission int64) (bool, error) {
+	if (i.Member.Permissions & permission) != permission {
+		err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
+			Data: &discordgo.InteractionResponseData{
+				Content: "You don't have permission to use this command!",
+				Flags:   1 << 6,
+			},
+		})
+		return false, err
+	}
+	return true, nil
 }
