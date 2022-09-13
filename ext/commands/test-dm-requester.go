@@ -3,7 +3,7 @@ package ext
 import (
 	"log"
 
-	"atomicnicos.me/go-bot/common"
+	"atomicnicos.me/digital-overdose-bot/common"
 	"github.com/bwmarrin/discordgo"
 )
 
