@@ -8,7 +8,7 @@ DO Guild ID is `687227857369432105`
 
 ## TODO
 
-- [ ] Implement DM: partial
-- [ ] Implement warn
-- [ ] Implement kick
-- [~] Fix timeout -> Needs to send a response first then edit it
+- [x] Implement DM
+- [x] Implement warn
+- [x] Implement kick
+- [x] Fix timeout

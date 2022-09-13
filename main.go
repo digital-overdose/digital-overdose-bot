@@ -2,12 +2,15 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"io"
 	"log"
 	"os"
 	"os/signal"
+	"time"
 
-	"atomicnicos.me/go-bot/common"
-	"atomicnicos.me/go-bot/ext"
+	"atomicnicos.me/digital-overdose-bot/common"
+	ext "atomicnicos.me/digital-overdose-bot/ext"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -32,6 +35,15 @@ var (
 	commands                       = ext.Commands
 	commandHandlers                = ext.CommandHandlers
 )
+
+func init() {
+	f, err := os.OpenFile(fmt.Sprintf("%v-bot.log", time.Now().Format("2006-01-02-15-04-05")), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("error opening file: %v", err)
+	}
+	mw := io.MultiWriter(os.Stdout, f)
+	log.SetOutput(mw)
+}
 
 func init() {
 	s.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
