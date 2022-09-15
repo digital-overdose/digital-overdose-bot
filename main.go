@@ -1,3 +1,9 @@
+/*
+This package contains the core code for the Digital Overdose Discord Server's Management Bot.
+
+Current features include:
+- Manual Purge
+*/
 package main
 
 import (
@@ -16,7 +22,10 @@ import (
 
 var s *discordgo.Session
 
-func init() { flag.Parse() }
+func init() {
+	flag.Parse()
+	common.LoadEnvOrFlags()
+}
 
 func init() {
 	var err error
@@ -37,7 +46,7 @@ var (
 )
 
 func init() {
-	f, err := os.OpenFile(fmt.Sprintf("%v-bot.log", time.Now().Format("2006-01-02-15-04-05")), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	f, err := os.OpenFile(fmt.Sprintf("log/%v-bot.log", time.Now().Format("2006-01-02-15-04-05")), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatalf("error opening file: %v", err)
 	}
