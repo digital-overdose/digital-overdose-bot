@@ -10,6 +10,10 @@ var Commands = []*discordgo.ApplicationCommand{
 		Name:        "list-purge-candidates",
 		Description: "Lists all the people who would be affected by a purge.",
 	},
+	{
+		Name:        "test-current-feature",
+		Description: "Tests whatever feature I'm currently trying out.",
+	},
 	/*{
 		Name:        "is-user-admin",
 		Description: "Checks whether the user has the Manage Server permission",
@@ -22,6 +26,7 @@ var Commands = []*discordgo.ApplicationCommand{
 
 var CommandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
 	"list-purge-candidates": ext.ListPurgeCandidates,
+	"test-current-feature":  ext.TestCurrentFeature,
 	//"is-user-admin":         ext.IsUserAdmin,
 	//"test-dm-requester":     ext.TestDMRequester,
 }
