@@ -20,12 +20,19 @@ VERIFICATION_ROLE_ID=
 VERIFICATION_CHANNEL_ID=
 MOD_ACTION_CHANNEL_ID=
 DEBUG_CHANNEL_ID=
+
+# ADDITIONAL FEATURE: welcome.go
+HUMAN_ROLE_ID=
+MEMBER_ROLE_ID=
+MAIN_CHANNEL_ID=
+
+# ADDITIONAL FEATURE: Abuse Warning
+STAFF_CHANNEL_ID=
 ```
 
 ## TODO
 
-- [ ] Ability to Cron
-
+- [x] Ability to Cron
 - [x] Message mod-logs
 - [x] Implement DM
 - [x] Implement warn

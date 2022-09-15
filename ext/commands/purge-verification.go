@@ -10,22 +10,11 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func ListPurgeCandidates(s *discordgo.Session, i *discordgo.InteractionCreate) {
+// Purges the Verification channel of lurkers (> 7 days) or warns them (> 5 days)
+func PurgeVerification(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	// If triggered by user-interaction
 	if i != nil {
-		ok, err := common.HasPermissions(i, s, discordgo.PermissionViewAuditLogs|discordgo.PermissionManageRoles)
-		if err != nil {
-			log.Println("Error checking permissions.")
-		}
-
-		if ok {
-			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-				Type: discordgo.InteractionResponseChannelMessageWithSource,
-				Data: &discordgo.InteractionResponseData{
-					Content: "Processing",
-				},
-			})
-		}
+		common.CheckHasPermissions(i, s, discordgo.PermissionViewAuditLogs|discordgo.PermissionManageRoles)
 	}
 
 	var (

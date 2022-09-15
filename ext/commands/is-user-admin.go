@@ -8,7 +8,7 @@ import (
 )
 
 func IsUserAdmin(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	ok, err := common.HasPermissions(i, s, discordgo.PermissionViewAuditLogs|discordgo.PermissionManageRoles)
+	ok, err := common.CheckHasPermissions(i, s, discordgo.PermissionViewAuditLogs|discordgo.PermissionManageRoles)
 	if err != nil {
 		log.Println("Error checking permissions.")
 	}

@@ -8,13 +8,25 @@ import (
 // List of command details for the user-facing side of the bot.
 var Commands = []*discordgo.ApplicationCommand{
 	{
-		Name:        "list-purge-candidates",
-		Description: "Lists all the people who would be affected by a purge.",
+		Name:        "purge-verification",
+		Description: "Purges all members that have failed to verify in time (Scheduled).",
 	},
 	{
+		Name:        "welcome",
+		Description: "Assigns roles, and welcomes the user to the server!",
+		Options: []*discordgo.ApplicationCommandOption{
+			{
+				Type:        discordgo.ApplicationCommandOptionUser,
+				Name:        "user",
+				Description: "User to be welcomed",
+				Required:    true,
+			},
+		},
+	},
+	/*{
 		Name:        "test-current-feature",
 		Description: "Tests whatever feature I'm currently trying out.",
-	},
+	},*/
 	/*{
 		Name:        "is-user-admin",
 		Description: "Checks whether the user has the Manage Server permission",
@@ -39,9 +51,10 @@ var Commands = []*discordgo.ApplicationCommand{
 
 // Command to bot function map.
 var CommandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
-	"list-purge-candidates": ext.ListPurgeCandidates,
-	"test-current-feature":  ext.TestCurrentFeature,
+	"purge-verification": ext.PurgeVerification,
+	"welcome":            ext.WelcomeUser,
+	//"test-current-feature": ext.TestCurrentFeature,
+	//"warn-user":            ext.WarnUserTest,
 	//"is-user-admin":         ext.IsUserAdmin,
 	//"test-dm-requester":     ext.TestDMRequester,
-	"warn-user": ext.WarnUserTest,
 }
