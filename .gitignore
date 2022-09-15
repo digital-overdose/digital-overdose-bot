@@ -15,3 +15,6 @@
 # vendor/
 *.log
 .env
+
+# Build artifact
+digital-overdose-bot

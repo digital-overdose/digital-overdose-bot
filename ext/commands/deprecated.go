@@ -1,12 +1,21 @@
 package ext
 
 import (
+	"log"
 	"time"
 
+	"atomicnicos.me/digital-overdose-bot/common"
 	"github.com/bwmarrin/discordgo"
 )
 
 func WarnUserTest(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content: "Processing",
+		},
+	})
+
 	options := i.ApplicationCommandData().Options
 
 	// Or convert the slice into a map
@@ -20,12 +29,10 @@ func WarnUserTest(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	warnUsers([]string{opt.UserValue(nil).ID}, map[string]time.Time{opt.UserValue(nil).ID: time.Now()}, s)
-	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: "Processing",
-		},
-	})
+	log.Print("HERE 1")
+	m, _ := s.GuildMember(*common.GuildID, opt.UserValue(nil).ID)
+	log.Print("HERE 2")
+
+	warnUsers([]discordgo.Member{*m}, map[string]time.Time{opt.UserValue(nil).ID: time.Now()}, s)
 
 }
