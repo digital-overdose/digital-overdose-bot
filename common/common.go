@@ -3,7 +3,6 @@ package common
 import (
 	"flag"
 	"log"
-	"os"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
@@ -45,10 +44,10 @@ func LoadEnvOrFlags() {
 	env, err := godotenv.Read()
 
 	if err != nil {
-		log.Println("Error loading .env file, relying on runtime or flags.")
+		log.Println("Error loading .env file, relying on flags.")
 	} else {
 		_ = godotenv.Load()
-		log.Printf("FROM OS.ENV? %v", os.Getenv("GUILD"))
+
 		tokens := []string{"GUILD", "TOKEN", "VERIFICATION_ROLE_ID", "VERIFICATION_CHANNEL_ID", "MOD_ACTION_CHANNEL_ID", "DEBUG_CHANNEL_ID"}
 		references := []*string{GuildID, BotToken, VerificationRoleID, VerificationChannelID, ModActionLogsChannelID, DebugChannelID}
 

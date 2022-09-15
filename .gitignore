@@ -17,4 +17,5 @@
 .env
 
 # Build artifact
-digital-overdose-bot
+build/*
+!build/.build

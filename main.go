@@ -7,6 +7,7 @@ Current features include:
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -32,13 +33,27 @@ func init() {
 	common.LoadEnvOrFlags()
 }
 
-// Initializes logging to a ./log/<datetime>.log file.
+// Initializes logging to a ./log/<datetime>.log file (if it can).
 func init() {
-	f, err := os.OpenFile(fmt.Sprintf("log/%v-bot.log", time.Now().Format("2006-01-02-15-04-05")), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatalf("error opening file: %v", err)
+	canWriteToFile := true
+	if _, err := os.Stat("./log/"); errors.Is(err, os.ErrNotExist) {
+		err := os.Mkdir("./log/", os.ModePerm)
+		if err != nil {
+			canWriteToFile = false
+			log.Println(err)
+		}
 	}
-	mw := io.MultiWriter(os.Stdout, f)
+
+	mw := io.MultiWriter()
+	if canWriteToFile {
+		f, err := os.OpenFile(fmt.Sprintf("log/%v-bot.log", time.Now().Format("2006-01-02-15-04-05")), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		if err != nil {
+			log.Fatalf("error opening file: %v", err)
+		}
+		mw = io.MultiWriter(os.Stdout, f)
+	} else {
+		mw = io.MultiWriter(os.Stdout)
+	}
 	log.SetOutput(mw)
 }
 
