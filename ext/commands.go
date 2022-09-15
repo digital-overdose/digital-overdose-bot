@@ -23,10 +23,10 @@ var Commands = []*discordgo.ApplicationCommand{
 			},
 		},
 	},
-	/*{
+	{
 		Name:        "test-current-feature",
 		Description: "Tests whatever feature I'm currently trying out.",
-	},*/
+	},
 	/*{
 		Name:        "is-user-admin",
 		Description: "Checks whether the user has the Manage Server permission",
@@ -51,9 +51,9 @@ var Commands = []*discordgo.ApplicationCommand{
 
 // Command to bot function map.
 var CommandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
-	"purge-verification": ext.PurgeVerification,
-	"welcome":            ext.WelcomeUser,
-	//"test-current-feature": ext.TestCurrentFeature,
+	"purge-verification":   ext.PurgeVerification,
+	"welcome":              ext.WelcomeUser,
+	"test-current-feature": ext.TestCurrentFeature,
 	//"warn-user":            ext.WarnUserTest,
 	//"is-user-admin":         ext.IsUserAdmin,
 	//"test-dm-requester":     ext.TestDMRequester,

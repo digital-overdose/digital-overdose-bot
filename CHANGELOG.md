@@ -15,10 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Verification! (`/welcome <user>`)
 - Build scripts!
 - Build folder!
+- RBAC infringement message in staff chat!
 
 ### Changed
 - Renamed list-purge-candidates to purge-verification to stay consistent with reality.
 - Made logging to files optional (for contexts where no log files can be created)
+- Role-based access control! Now it actually works!
 
 ## [0.1.2] - 2022-09-15
 ### Added

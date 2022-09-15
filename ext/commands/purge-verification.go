@@ -14,7 +14,9 @@ import (
 func PurgeVerification(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	// If triggered by user-interaction
 	if i != nil {
-		common.CheckHasPermissions(i, s, discordgo.PermissionViewAuditLogs|discordgo.PermissionManageRoles)
+		if ok, _ := common.CheckHasPermissions(i, s, discordgo.PermissionManageRoles); !ok {
+			return
+		}
 	}
 
 	var (
