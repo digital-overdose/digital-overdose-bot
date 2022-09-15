@@ -11,7 +11,9 @@ import (
 // Modifies the relevant roles and welcomes them into the server.
 // Streamlines the manual process we were previously using.
 func WelcomeUser(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	common.CheckHasPermissions(i, s, discordgo.PermissionViewAuditLogs|discordgo.PermissionManageRoles)
+	if ok, _ := common.CheckHasPermissions(i, s, discordgo.PermissionManageRoles); !ok {
+		return
+	}
 
 	options := i.ApplicationCommandData().Options
 	optionMap := make(map[string]*discordgo.ApplicationCommandInteractionDataOption, len(options))

@@ -10,7 +10,9 @@ import (
 func TestCurrentFeature(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	// Triggered by user-interaction
 	if i != nil {
-		common.CheckHasPermissions(i, s, discordgo.PermissionViewAuditLogs|discordgo.PermissionManageRoles)
+		if ok, _ := common.CheckHasPermissions(i, s, discordgo.PermissionViewAuditLogs|discordgo.PermissionManageRoles); !ok {
+			return
+		}
 	}
 
 	log.Print("AAAA")
