@@ -1,7 +1,6 @@
 package ext
 
 import (
-	"log"
 	"time"
 
 	"atomicnicos.me/digital-overdose-bot/common"
@@ -29,9 +28,7 @@ func WarnUserTest(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	log.Print("HERE 1")
 	m, _ := s.GuildMember(*common.GuildID, opt.UserValue(nil).ID)
-	log.Print("HERE 2")
 
 	warnUsers([]discordgo.Member{*m}, map[string]time.Time{opt.UserValue(nil).ID: time.Now()}, s)
 

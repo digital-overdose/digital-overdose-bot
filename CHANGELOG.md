@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
+## [0.1.3] - 2022-09-15
+### Added
+- Cron feature.
+- Cron job for verification purge.
+- Verification! (`/welcome <user>`)
+
+### Changed
+- Renamed list-purge-candidates to purge-verification to stay consistent with reality.
+
 ## [0.1.2] - 2022-09-15
 ### Added
 - CHANGELOG.md.
@@ -52,7 +61,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial run code.
 
-[Unreleased]: https://github.com/digital-overdose/digital-overdose-bot/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/digital-overdose/digital-overdose-bot/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/digital-overdose/digital-overdose-bot/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/digital-overdose/digital-overdose-bot/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/digital-overdose/digital-overdose-bot/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/digital-overdose/digital-overdose-bot/compare/v0.0.2...v0.1.0

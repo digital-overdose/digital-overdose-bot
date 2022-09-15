@@ -3,6 +3,7 @@ package common
 import (
 	"flag"
 	"log"
+	"os"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
@@ -17,28 +18,21 @@ var (
 	ModActionLogsChannelID = flag.String("mod", "", "The channel where the bots actions are then published.")
 	DebugChannelID         = flag.String("debug", "", "The channel to write debug to.")
 	DebugChannelWarning    = false
+
+	// Extensions
+	HumanRoleID    = flag.String("human", "", "The role assigned to humans.")
+	MemberRoleID   = flag.String("member", "", "The role assigned to members.")
+	MainChannelID  = flag.String("main", "", "The main channel.")
+	StaffChannelID = flag.String("staff", "", "The staff channel.")
 )
 
-// Checks whether the user having instantiated the command has sufficient rights to do so.
-func HasPermissions(i *discordgo.InteractionCreate, s *discordgo.Session, permission int64) (bool, error) {
-	if (i.Member.Permissions & permission) != permission {
-		err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Content: "You don't have permission to use this command!",
-				Flags:   1 << 6,
-			},
-		})
-		return false, err
-	}
-	return true, nil
-}
-
 // Writes the message to the application log and the debug channel, if it is set.
-func LogAndSend(message string, s *discordgo.Session) {
+func LogAndSend(message string, s *discordgo.Session, optional ...string) {
 	log.Print(message)
 
-	if *DebugChannelID != "" {
+	if len(optional) > 0 && len(optional[0]) > 0 {
+		_, _ = s.ChannelMessageSend(optional[0], message)
+	} else if *DebugChannelID != "" {
 		_, _ = s.ChannelMessageSend(*DebugChannelID, message)
 	} else if !DebugChannelWarning {
 		log.Print("DEBUG_CHANNEL_ID / --debug was not defined, skipping all debug message forwarding.")
@@ -49,26 +43,27 @@ func LogAndSend(message string, s *discordgo.Session) {
 // Checks whether any essential flags are missing.
 func LoadEnvOrFlags() {
 	env, err := godotenv.Read()
+
 	if err != nil {
-		log.Println("Error loading .env file, relying on flags.")
+		log.Println("Error loading .env file, relying on runtime or flags.")
 	} else {
-		if env["GUILD"] != "" {
-			*GuildID = env["GUILD"]
+		_ = godotenv.Load()
+		log.Printf("FROM OS.ENV? %v", os.Getenv("GUILD"))
+		tokens := []string{"GUILD", "TOKEN", "VERIFICATION_ROLE_ID", "VERIFICATION_CHANNEL_ID", "MOD_ACTION_CHANNEL_ID", "DEBUG_CHANNEL_ID"}
+		references := []*string{GuildID, BotToken, VerificationRoleID, VerificationChannelID, ModActionLogsChannelID, DebugChannelID}
+
+		// EXTENSIONS
+		tokens = append(tokens, "HUMAN_ROLE_ID", "MEMBER_ROLE_ID", "MAIN_CHANNEL_ID", "STAFF_CHANNEL_ID")
+		references = append(references, HumanRoleID, MemberRoleID, MainChannelID, StaffChannelID)
+
+		if len(tokens) != len(references) {
+			log.Fatalf("Mismatched Environment flags.")
 		}
-		if env["TOKEN"] != "" {
-			*BotToken = env["TOKEN"]
-		}
-		if env["VERIFICATION_ROLE_ID"] != "" {
-			*VerificationRoleID = env["VERIFICATION_ROLE_ID"]
-		}
-		if env["VERIFICATION_CHANNEL_ID"] != "" {
-			*VerificationChannelID = env["VERIFICATION_CHANNEL_ID"]
-		}
-		if env["MOD_ACTION_CHANNEL_ID"] != "" {
-			*ModActionLogsChannelID = env["MOD_ACTION_CHANNEL_ID"]
-		}
-		if env["DEBUG_CHANNEL_ID"] != "" {
-			*DebugChannelID = env["DEBUG_CHANNEL_ID"]
+
+		for i := 0; i < len(tokens); i++ {
+			if env[tokens[i]] != "" {
+				*references[i] = env[tokens[i]]
+			}
 		}
 	}
 

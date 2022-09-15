@@ -16,12 +16,15 @@ import (
 	"time"
 
 	"atomicnicos.me/digital-overdose-bot/common"
+	cron "atomicnicos.me/digital-overdose-bot/cron"
 	ext "atomicnicos.me/digital-overdose-bot/ext"
 	"github.com/bwmarrin/discordgo"
+	"github.com/go-co-op/gocron"
 )
 
 // The Discord session, used for state management.
 var s *discordgo.Session
+var cronScheduler *gocron.Scheduler
 
 // Parses the flags provided in `argv`, then loads any overwrites from the .env file.
 func init() {
@@ -58,6 +61,27 @@ func init() {
 			h(s, i)
 		}
 	})
+}
+
+// Initializes cron engine, and subsequently registers scheduled functions
+func init() {
+	cronScheduler = gocron.NewScheduler(time.UTC)
+
+	// Register each job individually.
+	log.Print("[+] Registering Jobs")
+	for _, j := range cron.CronJobs {
+		log.Printf("[--] Registered job '%v'", j.Name)
+		cronScheduler.Cron(j.CronString).Do(func() {
+			log.Printf("[+] Executing cron job '%v'", j.Name)
+			j.Job(s, nil)
+		})
+	}
+
+	log.Print("[✓] Registering Jobs")
+
+	// Start the cron scheduler in another thread.
+	cronScheduler.StartAsync()
+	log.Print("[✓] cron handler Started")
 }
 
 // Entry point, loads system and performs clean-up
