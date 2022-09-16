@@ -32,6 +32,11 @@ STAFF_CHANNEL_ID=
 
 ## TODO
 
+- [ ] Ability to download new binary
+- [ ] Ability to restart on a specific binary
+- [ ] Ability to list running instances of bot
+- [ ] Ability to stop a specific instance from reacting to commands (for testing)
+
 - [x] Ability to Cron
 - [x] Message mod-logs
 - [x] Implement DM
