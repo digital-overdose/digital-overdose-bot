@@ -26,10 +26,11 @@ func PurgeVerification(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		lastMessageID     = ""   // Last message ID processed (used as offset).
 		messageLimit      = 1000 // How many messages to test.
 
-		candidates     []discordgo.Member   = []discordgo.Member{}   // The members with the verification role.
-		candidatesKick []discordgo.Member   = []discordgo.Member{}   // The ^ members that have exceeded the 7-day non-verification limit.
-		candidatesWarn []discordgo.Member   = []discordgo.Member{}   // The ^ members that are nearing the 7-day non-verification limit (days 5 and 6)
-		timeLastSeen   map[string]time.Time = map[string]time.Time{} // When the ^ members were last seen (shortest time between joining or last message time)
+		candidates       []discordgo.Member   = []discordgo.Member{}   // The members with the verification role.
+		candidatesKick   []discordgo.Member   = []discordgo.Member{}   // The ^ members that have exceeded the 7-day non-verification limit.
+		candidatesWarn   []discordgo.Member   = []discordgo.Member{}   // The ^ members that are nearing the 7-day non-verification limit (days 5 and 6)
+		timeLastSeen     map[string]time.Time = map[string]time.Time{} // When the ^ members were last seen (shortest time between joining or last message time)
+		timeLastMessaged map[string]time.Time = map[string]time.Time{} // When the ^ members last messaged
 	)
 
 	// Retrieve server information
@@ -87,10 +88,14 @@ func PurgeVerification(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		common.LogAndSend(fmt.Sprintf("\tGot %v messages (%v/%v)!", len(messages), messagesProcessed, messageLimit), s)
 
 		for _, msg := range messages {
-			if _, ok := timeLastSeen[msg.Author.ID]; !ok {
-				timeLastSeen[msg.Author.ID] = msg.Timestamp
+			if _, ok := timeLastMessaged[msg.Author.ID]; !ok {
+				timeLastMessaged[msg.Author.ID] = msg.Timestamp
 			}
 		}
+	}
+
+	for k, v := range timeLastMessaged {
+		timeLastSeen[k] = v
 	}
 
 	common.LogAndSend(fmt.Sprintf("[+] Got %v members having posted a message.", len(timeLastSeen)), s)
