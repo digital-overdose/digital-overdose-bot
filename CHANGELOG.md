@@ -8,6 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
+## `0.1.4` - 2022-09-17
+### Fixes
+- Issue #2: [Link to issue](https://github.com/digital-overdose/digital-overdose-bot/issues/2)
+
+### Changed
+- `purge-verification`: Cleanliness by editing counter messages instead of reposting them.
+- `purge-verification`: Message in debug channel to indicate that the challenge was launched by the cron.
+- `welcome`: Changes how the user string is determined.
+- Powershell / CMD / sh build scripts to something more... clean.
+
+## `0.1.3-hotfix` - 2022-09-16
+### Fixes
+- Issue #1: [Link to issue](https://github.com/digital-overdose/digital-overdose-bot/issues/1)
+
+### Changed
+- Restoring changes to the "Time Last Seen" calculation to take into account the most recent of the last messages, and not be overwritten.
+- Slight changes to build scripts.
+
 ## [0.1.3] - 2022-09-15
 ### Added
 - Cron feature.

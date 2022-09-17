@@ -1,38 +1,52 @@
 @echo off
-set VERSION=1.1.3-hotfix
+echo Building artifacts in /build
+set VERSION=%1
 
-:: set GOOS=darwin     && set GOARCH=amd64     && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
-:: set GOOS=darwin     && set GOARCH=arm64     && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
+:: call :build darwin				amd64
+:: call :build darwin				arm64
 
-:: set GOOS=dragonfly  && set GOARCH=amd64     && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
+:: call :build dragonfly		amd64
 
-:: set GOOS=freebsd    && set GOARCH=386       && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
-:: set GOOS=freebsd    && set GOARCH=amd64     && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
-:: set GOOS=freebsd    && set GOARCH=arm       && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
+:: call :build freebsd			386
+:: call :build freebsd			amd64
+:: call :build freebsd			arm
 
-:: set GOOS=linux      && set GOARCH=386       && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
-set GOOS=linux      && set GOARCH=amd64     && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
-set GOOS=linux      && set GOARCH=arm       && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
-set GOOS=linux      && set GOARCH=arm64     && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
-:: set GOOS=linux      && set GOARCH=ppc64     && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
-:: set GOOS=linux      && set GOARCH=ppc64le   && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
-:: set GOOS=linux      && set GOARCH=mips      && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
-:: set GOOS=linux      && set GOARCH=mipsle    && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
-:: set GOOS=linux      && set GOARCH=mips64    && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
-:: set GOOS=linux      && set GOARCH=mips64le  && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
+:: call :build linux				386
+call :build linux amd64
+call :build linux arm
+call :build linux arm64
+:: call :build linux 		ppc64    
+:: call :build linux 		ppc64le  
+:: call :build linux 		mips     
+:: call :build linux 		mipsle   
+:: call :build linux 		mips64   
+:: call :build linux 		mips64le 
 
-:: set GOOS=netbsd     && set GOARCH=386       && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
-:: set GOOS=netbsd     && set GOARCH=amd64     && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
-:: set GOOS=netbsd     && set GOARCH=arm       && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
+:: call :build netbsd 	386      
+:: call :build netbsd 	amd64    
+:: call :build netbsd 	arm      
 
-:: set GOOS=openbsd    && set GOARCH=386       && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
-:: set GOOS=openbsd    && set GOARCH=amd64     && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
-:: set GOOS=openbsd    && set GOARCH=arm       && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
+:: call :build openbsd 	386    
+:: call :build openbsd 	amd64  
+:: call :build openbsd 	arm    
+ 
+:: call :build plan9 		386      
+:: call :build plan9 		amd64    
+ 
+:: call :build solaris 	amd64  
 
-:: set GOOS=plan9      && set GOARCH=386       && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
-:: set GOOS=plan9      && set GOARCH=amd64     && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
+call :build windows 386
+call :build windows amd64
 
-:: set GOOS=solaris    && set GOARCH=amd64     && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH% .
+echo Done!
+exit /b
 
-set GOOS=windows    && set GOARCH=386       && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH%.exe .
-set GOOS=windows    && set GOARCH=amd64     && go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH%.exe .
+:build
+set GOOS=%~1
+set GOARCH=%~2
+set EXT=
+if "%GOOS%"=="windows" (
+	set EXT=.exe
+)
+go build -o build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH%%EXT% .
+echo Built build/digital-overdose-bot-v%VERSION%-%GOOS%-%GOARCH%%EXT%

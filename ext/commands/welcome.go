@@ -26,11 +26,17 @@ func WelcomeUser(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	usr_str := fmt.Sprintf("'%v#%v' (ID: %v)", opt.UserValue(nil).Username, opt.UserValue(nil).Discriminator, opt.UserValue(nil).ID)
+	member, err := s.GuildMember(*common.GuildID, opt.UserValue(nil).ID)
+	if err != nil {
+		log.Printf("Failed to retrieve Member (ID: %v) from Guild %v", opt.UserValue(nil).ID, *common.GuildID)
+	}
+
+	usr_str := fmt.Sprintf("'%v#%v' (ID: %v)", member.User.Username, member.User.Discriminator, member.User.ID)
 
 	if *common.HumanRoleID != "" {
 		log.Printf("[+] Adding 'Human' role to %v", usr_str)
 		err := s.GuildMemberRoleAdd(*common.GuildID, opt.UserValue(nil).ID, *common.HumanRoleID)
+
 		if err != nil {
 			log.Printf("[x] Failed adding 'Human' role to %v", usr_str)
 		}
@@ -39,13 +45,15 @@ func WelcomeUser(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	if *common.MemberRoleID != "" {
 		log.Printf("[+] Adding 'Member' role to %v", usr_str)
 		err := s.GuildMemberRoleAdd(*common.GuildID, opt.UserValue(nil).ID, *common.MemberRoleID)
+
 		if err != nil {
 			log.Printf("[x] Failed adding 'Member' role to %v", usr_str)
 		}
 	}
 
 	log.Printf("[+] Removing 'Verification' role from %v", usr_str)
-	err := s.GuildMemberRoleRemove(*common.GuildID, opt.UserValue(nil).ID, *common.VerificationRoleID)
+	err = s.GuildMemberRoleRemove(*common.GuildID, opt.UserValue(nil).ID, *common.VerificationRoleID)
+
 	if err != nil {
 		log.Printf("[x] Failed removing 'Verification' role from %v", usr_str)
 	}
@@ -53,7 +61,8 @@ func WelcomeUser(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	if *common.MainChannelID != "" {
 		formatted_msg := fmt.Sprintf("Welcome <@%v>! Please remember the <#687239516800548894>, perhaps tell us something <#783109920240697414>, grab yourself some <#687232316061384779> and perhaps drop <#783110016076349450>!", opt.UserValue(nil).ID)
 
-		log.Printf("[+] Welcomed %v in main channel.", usr_str)
+		common.LogAndSend(fmt.Sprintf("[+] Welcomed %v in main channel.", usr_str), s)
+		//_, err := s.ChannelMessageSend(*common.DebugChannelID, formatted_msg)
 		_, err := s.ChannelMessageSend(*common.MainChannelID, formatted_msg)
 
 		if err != nil {

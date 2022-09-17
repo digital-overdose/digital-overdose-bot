@@ -26,16 +26,22 @@ var (
 )
 
 // Writes the message to the application log and the debug channel, if it is set.
-func LogAndSend(message string, s *discordgo.Session, optional ...string) {
+func LogAndSend(message string, s *discordgo.Session, nonDefaultChannelID ...string) string {
 	log.Print(message)
 
-	if len(optional) > 0 && len(optional[0]) > 0 {
-		_, _ = s.ChannelMessageSend(optional[0], message)
+	if len(nonDefaultChannelID) > 0 && len(nonDefaultChannelID[0]) > 0 {
+		msg, _ := s.ChannelMessageSend(nonDefaultChannelID[0], message)
+		return msg.ID
+	} else if len(nonDefaultChannelID) > 0 && len(nonDefaultChannelID[0]) == 0 {
+		return ""
 	} else if *DebugChannelID != "" {
-		_, _ = s.ChannelMessageSend(*DebugChannelID, message)
+		msg, _ := s.ChannelMessageSend(*DebugChannelID, message)
+		return msg.ID
 	} else if !DebugChannelWarning {
 		log.Print("DEBUG_CHANNEL_ID / --debug was not defined, skipping all debug message forwarding.")
 	}
+
+	return ""
 }
 
 // Attempts to load an environment file, and if it exists, overwrites any flags set through argv with it's contents.
