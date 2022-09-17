@@ -1,37 +1,42 @@
-VERSION=1.1.3-hotfix
+echo "Building artifacts in /build"
+VERSION=$1
 
-#GOOS=darwin;        GOARCH=amd64; 		go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-amd64 .
-#GOOS=darwin;        GOARCH=arm64; 		go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-arm64 .
+build () {
+	GOOS=$1
+	GOARCH=$2
+	EXT=""
+	if [ "$2" = "windows" ]
+	then
+		EXT=".exe"
+	fi
 
-#GOOS=dragonfly;     GOARCH=amd64; 	    go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-amd64 .
+	go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH$EXT .
+}
 
-#GOOS=freebsd; 		GOARCH=386; 	 	go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-386 .
-#GOOS=freebsd; 		GOARCH=amd64; 		go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-amd64 .
-#GOOS=freebsd; 		GOARCH=arm; 	 	go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-arm .
-
-#GOOS=linux;	 		GOARCH=386; 		go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-386 .
-GOOS=linux;	 		GOARCH=amd64; 		go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-amd64 .
-GOOS=linux;	 		GOARCH=arm;	 		go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-arm .
-GOOS=linux;	 		GOARCH=arm64; 		go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-arm64 .
-#GOOS=linux;	 		GOARCH=ppc64; 		go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-ppc64 .
-#GOOS=linux;	 		GOARCH=ppc64le; 	go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-ppc64le .
-#GOOS=linux;	 		GOARCH=mips; 		go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-mips .
-#GOOS=linux;	 		GOARCH=mipsle; 	    go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-mipsle .
-#GOOS=linux;	 		GOARCH=mips64; 	    go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-mips64 .
-#GOOS=linux;	 		GOARCH=mips64le;    go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-mips64le .
-
-#GOOS=netbsd;		GOARCH=386; 	    go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-386 .
-#GOOS=netbsd;		GOARCH=amd64; 		go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-amd64 .
-#GOOS=netbsd;		GOARCH=arm; 		go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-arm .
-
-#GOOS=openbsd;		GOARCH=386; 		go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-386 .
-#GOOS=openbsd;		GOARCH=amd64; 		go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-amd64 .
-#GOOS=openbsd;		GOARCH=arm; 		go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-arm .
-
-#GOOS=plan9;			GOARCH=386; 		go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-386 .
-#GOOS=plan9;			GOARCH=amd64; 		go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-amd64 .
-
-#GOOS=solaris;		GOARCH=amd64; 		go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-amd64 .
-
-GOOS=windows; 		GOARCH=386; 		go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-386.exe .
-GOOS=windows; 		GOARCH=amd64; 		go build -o build/digital-overdose-bot-v$VERSION-$GOOS-$GOARCH-amd64.exe .
+#build darwin    	amd64
+#build darwin    	arm64
+#build dragonfly 	amd64
+#build freebsd   	386
+#build freebsd   	amd64
+#build freebsd   	arm
+#build linux     	386
+build linux			amd64
+build linux			arm
+build linux			arm64
+# build linux	 		ppc64
+# build linux	 		ppc64le
+# build linux	 		mips
+# build linux	 		mipsle
+# build linux	 		mips64
+# build linux	 		mips64le
+# build netbsd		386
+# build netbsd		amd64
+# build netbsd		arm
+# build openbsd		386
+# build openbsd		amd64
+# build openbsd		arm
+# build plan9			386
+# build plan9			amd64
+# build solaris		amd64
+build windows 	386
+build windows 	amd64
