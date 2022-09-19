@@ -1,0 +1,16 @@
+[Unit]
+Description=The Digital Overdose Bot, as a service
+StartLimitBurst=3
+StartLimitIntervalSec=60
+Wants=network-online.target
+After=network.target network-online.target
+
+[Service]
+WorkingDirectory=/home/pi
+ExecStart=/home/pi/digital-overdose-bot --guild <GUILD_ID> --token <TOKEN> --role <VERIFICATION_ROLE> --wall <VERIFICATION_CHANNEL_ID> --mod <MOD_ACTION_LOGS_CHANNEL_ID> --mod-thread <MOD_ACTION_LOGS_THREAD_ID> --debug <DEBUG_CHANNEL_ID> --human <HUMAN_ROLE_ID> --member <MEMBER_ROLE_ID> --main <MAIN_CHANNEL_ID> --staff <ABUSE_CHANNEL_ID> --upgrade <UPGRADE_RELEASE_PATH>
+Restart=always
+RestartSec=10
+KillSignal=SIGINT
+
+[Install]
+WantedBy=multi-user.target

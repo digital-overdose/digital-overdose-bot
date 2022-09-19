@@ -18,7 +18,10 @@ func PurgeVerification(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			return
 		}
 	} else {
-		common.LogAndSend(":robot: :rotating-light: `/purge-verification` triggered by cron.", s)
+		common.LogAndSend(":robot: :rotating_light: `/purge-verification` triggered by cron.", s)
+	}
+	if ok := common.ShouldExecutionBeSkippedIfDev(true); ok {
+		return
 	}
 
 	var (
@@ -149,7 +152,7 @@ func PurgeVerification(s *discordgo.Session, i *discordgo.InteractionCreate) {
 func warnUsers(candidatesWarn []discordgo.Member, timeLastSeen map[string]time.Time, s *discordgo.Session) (bool, error) {
 	formatted_users := "`Not seen in server since`   |   User\n"
 	for _, candidate := range candidatesWarn {
-		formatted_users += fmt.Sprintf("<t:%v:f>   -   %v\n", timeLastSeen[candidate.User.ID].Unix(), fmt.Sprintf("<@%v>,", candidate.User.ID))
+		formatted_users += fmt.Sprintf("<t:%v:f>   -   %v\n", timeLastSeen[candidate.User.ID].Unix(), fmt.Sprintf("<@%v>", candidate.User.ID))
 	}
 
 	formatted_msg := fmt.Sprintf(":warning: **Verification** :warning:\n\nThe following users have yet to verify!\n\n%v\nPlease verify! In order to verify:\n\t1) ✅ Please accept the rules by posting your acceptance here in the verification channel\n\t2) Please tell us a bit about yourself.\n\nFailure to verify will result in you being kicked in less than 2 days.", formatted_users)
@@ -183,21 +186,27 @@ func kickUser(candidateKick discordgo.Member, s *discordgo.Session) (bool, error
 
 // Writes an itemized message in #mod-action-logs.
 func sendModActionLogsMessage(candidatesKick []discordgo.Member, warnedUsers []discordgo.Member, s *discordgo.Session) {
-	if len(*common.ModActionLogsChannelID) == 0 {
+	if len(*common.ModActionLogsThreadID) == 0 {
 		log.Printf("Channel ModActionLogs not set, skipping message.")
 		return
 	}
-	formatted_users := ""
+	formattedUsers := ""
 
 	for _, candidate := range candidatesKick {
-		if len(formatted_users) == 0 {
-			formatted_users = fmt.Sprintf("%v", candidate.User.Username)
+		if len(formattedUsers) == 0 {
+			formattedUsers = fmt.Sprintf("%v", candidate.User.Username)
 		} else {
-			formatted_users = fmt.Sprintf("%v,\n%v", formatted_users, candidate.User.Username)
+			formattedUsers = fmt.Sprintf("%v\n%v", formattedUsers, candidate.User.Username)
 		}
 	}
 
-	formatted_msg := fmt.Sprintf("*Verification Pruning Report*\n\n**%v** users kicked for failing to verify:\n```%v```\n**%v** additional users reminded to verify.", len(candidatesKick), formatted_users, len(warnedUsers))
+	if len(formattedUsers) != 0 {
+		formattedUsers = fmt.Sprintf(":\n```\n%v\n```\n", formattedUsers)
+	} else {
+		formattedUsers = ".\n"
+	}
 
-	_, _ = s.ChannelMessageSend(*common.ModActionLogsChannelID, formatted_msg)
+	formatted_msg := fmt.Sprintf("*Verification Pruning Report*\n\n**%v** users kicked for failing to verify%v**%v** additional users reminded to verify.", len(candidatesKick), formattedUsers, len(warnedUsers))
+
+	_, _ = s.ChannelMessageSend(*common.ModActionLogsThreadID, formatted_msg)
 }

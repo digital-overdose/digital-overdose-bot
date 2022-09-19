@@ -15,6 +15,10 @@ func WelcomeUser(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
+	if ok := common.ShouldExecutionBeSkippedIfDev(true); ok {
+		return
+	}
+
 	options := i.ApplicationCommandData().Options
 	optionMap := make(map[string]*discordgo.ApplicationCommandInteractionDataOption, len(options))
 	for _, opt := range options {

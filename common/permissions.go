@@ -18,7 +18,7 @@ func CheckHasPermissions(i *discordgo.InteractionCreate, s *discordgo.Session, p
 			},
 		})
 
-		formatted_msg := fmt.Sprintf("User '%v#%v' (ID: %v) unsuccessfully used the command '%v'.", i.Member.User.Username, i.Member.User.Discriminator, i.Member.User.ID, i.ApplicationCommandData().Name)
+		formatted_msg := fmt.Sprintf("[👁] User '%v#%v' (ID: %v) unsuccessfully used the command '%v'.", i.Member.User.Username, i.Member.User.Discriminator, i.Member.User.ID, i.ApplicationCommandData().Name)
 		LogAndSend(formatted_msg, s, *StaffChannelID)
 
 		return false, err
@@ -32,7 +32,7 @@ func CheckHasPermissions(i *discordgo.InteractionCreate, s *discordgo.Session, p
 		},
 	})
 
-	log.Printf("User '%v#%v' (ID: %v) successfully used the command '%v'.", i.Member.User.Username, i.Member.User.Discriminator, i.Member.User.ID, i.ApplicationCommandData().Name)
+	log.Printf("[👁] User '%v#%v' (ID: %v) successfully used the command '%v'.", i.Member.User.Username, i.Member.User.Discriminator, i.Member.User.ID, i.ApplicationCommandData().Name)
 
 	return true, nil
 }

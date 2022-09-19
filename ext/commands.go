@@ -27,6 +27,18 @@ var Commands = []*discordgo.ApplicationCommand{
 		Name:        "test-current-feature",
 		Description: "Tests whatever feature I'm currently trying out.",
 	},
+	{
+		Name:        "upgrade",
+		Description: "Upgrades the bot to a specified release.",
+		Options: []*discordgo.ApplicationCommandOption{
+			{
+				Type:        discordgo.ApplicationCommandOptionString,
+				Name:        "version",
+				Description: "`vx.x.x`: The version string of the release to be downloaded.`",
+				Required:    true,
+			},
+		},
+	},
 	/*{
 		Name:        "is-user-admin",
 		Description: "Checks whether the user has the Manage Server permission",
@@ -54,6 +66,7 @@ var CommandHandlers = map[string]func(s *discordgo.Session, i *discordgo.Interac
 	"purge-verification":   ext.PurgeVerification,
 	"welcome":              ext.WelcomeUser,
 	"test-current-feature": ext.TestCurrentFeature,
+	"upgrade":              ext.UpgradeBot,
 	//"warn-user":            ext.WarnUserTest,
 	//"is-user-admin":         ext.IsUserAdmin,
 	//"test-dm-requester":     ext.TestDMRequester,
