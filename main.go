@@ -23,6 +23,8 @@ import (
 	"github.com/go-co-op/gocron"
 )
 
+var VERSION = "0.1.5"
+
 // The Discord session, used for state management.
 var s *discordgo.Session
 var cronScheduler *gocron.Scheduler
@@ -69,7 +71,17 @@ func init() {
 	s.Identify.Intents = discordgo.IntentsAllWithoutPrivileged | discordgo.IntentsGuildMembers
 }
 
-// Registers the programmed functions.
+var (
+	dmPermission                   = false
+	defaultMemberPermissions int64 = discordgo.PermissionManageServer
+	commands                       = ext.Commands
+	commandHandlers                = ext.CommandHandlers
+)
+
+func init() {
+	common.InitializeLogging()
+}
+
 func init() {
 	s.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		if h, ok := ext.CommandHandlers[i.ApplicationCommandData().Name]; ok {
@@ -102,7 +114,8 @@ func init() {
 // Entry point, loads system and performs clean-up
 func main() {
 	s.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
-		log.Printf("Logged in as: %v#%v", s.State.User.Username, s.State.User.Discriminator)
+		log.Printf("Running in version: v%v", VERSION)
+		log.Printf("Logged in as: '%v#%v'", s.State.User.Username, s.State.User.Discriminator)
 	})
 
 	err := s.Open()
@@ -128,6 +141,7 @@ func main() {
 	// CTRL+C Signal Handler
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
+	signal.Notify(stop, os.Kill)
 	log.Println("Press Ctrl+C to exit")
 	<-stop
 

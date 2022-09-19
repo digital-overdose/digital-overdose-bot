@@ -4,7 +4,6 @@ import (
 	"flag"
 	"log"
 
-	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
 )
 
@@ -15,33 +14,29 @@ var (
 	VerificationRoleID     = flag.String("role", "", "The role that targets the role given to new people in the server.")
 	VerificationChannelID  = flag.String("wall", "", "The channel where new members aim to verify.")
 	ModActionLogsChannelID = flag.String("mod", "", "The channel where the bots actions are then published.")
+	ModActionLogsThreadID  = flag.String("mod-thread", "", "The channel where the bots' repetitive actions are published.")
 	DebugChannelID         = flag.String("debug", "", "The channel to write debug to.")
 	DebugChannelWarning    = false
 
 	// Extensions
-	HumanRoleID    = flag.String("human", "", "The role assigned to humans.")
-	MemberRoleID   = flag.String("member", "", "The role assigned to members.")
-	MainChannelID  = flag.String("main", "", "The main channel.")
-	StaffChannelID = flag.String("staff", "", "The staff channel.")
+	HumanRoleID       = flag.String("human", "", "The role assigned to humans.")
+	MemberRoleID      = flag.String("member", "", "The role assigned to members.")
+	MainChannelID     = flag.String("main", "", "The main channel.")
+	StaffChannelID    = flag.String("staff", "", "The staff channel.")
+	UpgradeReleaseURL = flag.String("upgrade", "", "The baseline path for bot upgrades.")
+
+	CURRENTLY_DEV = flag.Bool("dev", false, "Whether or not the bot is run from a dev environment.")
 )
 
-// Writes the message to the application log and the debug channel, if it is set.
-func LogAndSend(message string, s *discordgo.Session, nonDefaultChannelID ...string) string {
-	log.Print(message)
-
-	if len(nonDefaultChannelID) > 0 && len(nonDefaultChannelID[0]) > 0 {
-		msg, _ := s.ChannelMessageSend(nonDefaultChannelID[0], message)
-		return msg.ID
-	} else if len(nonDefaultChannelID) > 0 && len(nonDefaultChannelID[0]) == 0 {
-		return ""
-	} else if *DebugChannelID != "" {
-		msg, _ := s.ChannelMessageSend(*DebugChannelID, message)
-		return msg.ID
-	} else if !DebugChannelWarning {
-		log.Print("DEBUG_CHANNEL_ID / --debug was not defined, skipping all debug message forwarding.")
+// A bypass function, to avoid collisions between a temporarily running dev environment and a permanently running server.
+func ShouldExecutionBeSkippedIfDev(shouldSkipIfDev bool) bool {
+	// The function should always run in prod.
+	if !*CURRENTLY_DEV {
+		return false
+	} else {
+		// Should only run if explicitly told that it can.
+		return *CURRENTLY_DEV == shouldSkipIfDev
 	}
-
-	return ""
 }
 
 // Attempts to load an environment file, and if it exists, overwrites any flags set through argv with it's contents.
@@ -54,12 +49,12 @@ func LoadEnvOrFlags() {
 	} else {
 		_ = godotenv.Load()
 
-		tokens := []string{"GUILD", "TOKEN", "VERIFICATION_ROLE_ID", "VERIFICATION_CHANNEL_ID", "MOD_ACTION_CHANNEL_ID", "DEBUG_CHANNEL_ID"}
-		references := []*string{GuildID, BotToken, VerificationRoleID, VerificationChannelID, ModActionLogsChannelID, DebugChannelID}
+		tokens := []string{"GUILD", "TOKEN", "VERIFICATION_ROLE_ID", "VERIFICATION_CHANNEL_ID", "MOD_ACTION_CHANNEL_ID", "MOD_ACTION_THREAD_ID", "DEBUG_CHANNEL_ID"}
+		references := []*string{GuildID, BotToken, VerificationRoleID, VerificationChannelID, ModActionLogsChannelID, ModActionLogsThreadID, DebugChannelID}
 
 		// EXTENSIONS
-		tokens = append(tokens, "HUMAN_ROLE_ID", "MEMBER_ROLE_ID", "MAIN_CHANNEL_ID", "STAFF_CHANNEL_ID")
-		references = append(references, HumanRoleID, MemberRoleID, MainChannelID, StaffChannelID)
+		tokens = append(tokens, "HUMAN_ROLE_ID", "MEMBER_ROLE_ID", "MAIN_CHANNEL_ID", "STAFF_CHANNEL_ID", "UPGRADE_RELEASE_PATH")
+		references = append(references, HumanRoleID, MemberRoleID, MainChannelID, StaffChannelID, UpgradeReleaseURL)
 
 		if len(tokens) != len(references) {
 			log.Fatalf("Mismatched Environment flags.")
