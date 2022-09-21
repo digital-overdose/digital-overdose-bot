@@ -71,6 +71,8 @@ func UpgradeBot(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	common.LogAndSend(fmt.Sprintf("[+] Renamed executable to expected pattern"), s)
 
+	os.Chmod(fmt.Sprintf("./digital-overdose-bot%v", ext), 0755)
+
 	os.Remove(fmt.Sprintf("./digital-overdose-bot.old%v", ext))
 	common.LogAndSend(fmt.Sprintf("[+] Removed the outdated executable."), s)
 
