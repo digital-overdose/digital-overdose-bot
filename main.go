@@ -23,7 +23,7 @@ import (
 	"github.com/go-co-op/gocron"
 )
 
-var VERSION = "0.1.5"
+var VERSION = "0.1.5-hotfix"
 
 // The Discord session, used for state management.
 var s *discordgo.Session
@@ -92,22 +92,23 @@ func init() {
 
 // Initializes cron engine, and subsequently registers scheduled functions
 func init() {
-	cronScheduler = gocron.NewScheduler(time.UTC)
+	schedulers := make([]*gocron.Scheduler, len(cron.CronJobs))
 
-	// Register each job individually.
-	log.Print("[+] Registering Jobs")
-	for _, j := range cron.CronJobs {
-		log.Printf("[--] Registered job '%v'", j.Name)
-		cronScheduler.Cron(j.CronString).Do(func() {
-			log.Printf("[+] Executing cron job '%v'", j.Name)
-			j.Job(s, nil)
+	for i := 0; i < len(cron.CronJobs); i++ {
+		schedulers[i] = gocron.NewScheduler(time.UTC)
+		job := cron.CronJobs[i]
+
+		log.Printf("[--] Registered job '%v': '%v'", job.Name, job.CronString)
+		schedulers[i].Cron(job.CronString).Do(func() {
+			log.Printf("[+] Executing cron job '%v':'%v", job.Name, &job.Name)
+			job.Job(s, nil)
 		})
+		schedulers[i].StartAsync()
 	}
 
 	log.Print("[✓] Registering Jobs")
 
 	// Start the cron scheduler in another thread.
-	cronScheduler.StartAsync()
 	log.Print("[✓] cron handler Started")
 }
 
