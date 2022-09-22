@@ -36,13 +36,13 @@ UPGRADE=https://github.com/digital-overdose/digital-overdose-bot/releases/downlo
 ## TODO
 
 ### Features (Future)
-- [ ] `/stats` -> Number of people interacting over 2 weeks. Channel usage. Keep message ID in a file? (Cron)
+- [ ] `/stats` ⇾ Number of people interacting over 2 weeks. Channel usage. Keep message ID in a file? (Cron)
 
-### Features (Important->Critical)
+### Features (Important ⇾ Critical)
 
 - [x] Ability to download new binary
-- [ ] Ability to restart on a specific binary
-- [ ] Ability to list running instances of bot
+- [x] Ability to restart on a specific binary
+- [x] Ability to list running instances of bot
 - [x] Ability to stop a specific instance from reacting to commands (for testing)
 
 ### Done

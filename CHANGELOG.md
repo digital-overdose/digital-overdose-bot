@@ -8,7 +8,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
-## `0.1.4` - 2022-09-17
+## `0.1.5-hotfix` - 2022-09-22
+### Fixes
+- Issue #5: [Link to issue](https://github.com/digital-overdose/digital-overdose-bot/issues/5s)
+### Changed
+- How the `cron` scheduler is provisioned, as the current version would mix up memory addresses. TL;DR: Can't run multiple tasks in one scheduler. And one needs to dereference the provided job.
+
+## [0.1.5] - 2022-09-21
+### Fixes
+- Issue #3: [Link to issue](https://github.com/digital-overdose/digital-overdose-bot/issues/3)
+- Issue #4: [Link to issue](https://github.com/digital-overdose/digital-overdose-bot/issues/4)
+
+### Added
+- Self-upgrade capability for the bot, via a command. (reliant on systemd restart feature).
+- Log pagination at midnight every day.
+
+### Changed
+- Target for verification purge channel
+
+## [0.1.4] - 2022-09-17
 ### Fixes
 - Issue #2: [Link to issue](https://github.com/digital-overdose/digital-overdose-bot/issues/2)
 
@@ -84,7 +102,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial run code.
 
-[Unreleased]: https://github.com/digital-overdose/digital-overdose-bot/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/digital-overdose/digital-overdose-bot/compare/v0.1.5...HEAD
+[0.1.5]: https://github.com/digital-overdose/digital-overdose-bot/compare/v0.1.4...v0.1.5
+[0.1.4]: https://github.com/digital-overdose/digital-overdose-bot/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/digital-overdose/digital-overdose-bot/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/digital-overdose/digital-overdose-bot/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/digital-overdose/digital-overdose-bot/compare/v0.1.0...v0.1.1
