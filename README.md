@@ -36,7 +36,17 @@ UPGRADE=https://github.com/digital-overdose/digital-overdose-bot/releases/downlo
 ## TODO
 
 ### Features (Future)
+
+- [x] On Join message.
+- [ ] `/warn` ⇾ Warn a user for a behavior (user, reason)
+- [ ] `/unwarn` ⇾ Remove an attributed warn.
+- [ ] `/ban` ⇾ Ban a user for a behavior (user, reason) + DM.
+- [ ] `/unban` ⇾ Unban someone
 - [ ] `/stats` ⇾ Number of people interacting over 2 weeks. Channel usage. Keep message ID in a file? (Cron)
+
+#### Reqs
+
+- Small DBMS, sqlite?
 
 ### Features (Important ⇾ Critical)
 

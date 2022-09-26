@@ -1,8 +1,9 @@
 package cron
 
 import (
+	commands_management "atomicnicos.me/digital-overdose-bot/extensions/commands/management"
+
 	"atomicnicos.me/digital-overdose-bot/common"
-	ext "atomicnicos.me/digital-overdose-bot/ext/commands"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -21,7 +22,7 @@ var CronJobs = []*CronJob{
 	{
 		Name:       "Automod: Verification Prune",
 		CronString: "0 12 */1 * *",
-		Job:        ext.PurgeVerification,
+		Job:        commands_management.PurgeVerification,
 	},
 	{
 		Name:       "Management: Log cycling",

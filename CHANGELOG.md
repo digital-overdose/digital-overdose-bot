@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Released]
 
+## [0.1.6] - 2022-09-26
+
+### Added
+- Version file that exports the current version number.
+- Welcome message (on join).
+- Handler folder for all the event handlers.
+
+### Changed
+- File structure of the "extensions" (the various commands) to differentiate semantically. (moderation actions, management, etc)
+
+### Removed
+- Duplicate logging initialization in `main.go`.
+- Various debug functions/experiments that are now sunset.
+
 ## `0.1.5-hotfix` - 2022-09-22
 ### Fixes
 - Issue #5: [Link to issue](https://github.com/digital-overdose/digital-overdose-bot/issues/5s)
@@ -102,7 +116,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial run code.
 
-[Unreleased]: https://github.com/digital-overdose/digital-overdose-bot/compare/v0.1.5...HEAD
+[Unreleased]: https://github.com/digital-overdose/digital-overdose-bot/compare/v0.1.6...HEAD
+[0.1.6]: https://github.com/digital-overdose/digital-overdose-bot/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/digital-overdose/digital-overdose-bot/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/digital-overdose/digital-overdose-bot/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/digital-overdose/digital-overdose-bot/compare/v0.1.2...v0.1.3
