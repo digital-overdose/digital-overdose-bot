@@ -1,7 +1,9 @@
-package ext
+package extensions
 
 import (
-	ext "atomicnicos.me/digital-overdose-bot/ext/commands"
+	commands "atomicnicos.me/digital-overdose-bot/extensions/commands"
+	commands_management "atomicnicos.me/digital-overdose-bot/extensions/commands/management"
+	commands_moderation "atomicnicos.me/digital-overdose-bot/extensions/commands/moderation"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -39,6 +41,30 @@ var Commands = []*discordgo.ApplicationCommand{
 			},
 		},
 	},
+	{
+		Name:        "warn",
+		Description: "Warns a user.",
+		Options: []*discordgo.ApplicationCommandOption{
+			{
+				Type:        discordgo.ApplicationCommandOptionUser,
+				Name:        "user",
+				Description: "The user to be warned.",
+				Required:    true,
+			},
+		},
+	},
+	{
+		Name:        "unwarn",
+		Description: "Unwarns a user.",
+		Options: []*discordgo.ApplicationCommandOption{
+			{
+				Type:        discordgo.ApplicationCommandOptionUser,
+				Name:        "user",
+				Description: "The user to have their last warning removed.",
+				Required:    true,
+			},
+		},
+	},
 	/*{
 		Name:        "is-user-admin",
 		Description: "Checks whether the user has the Manage Server permission",
@@ -63,10 +89,12 @@ var Commands = []*discordgo.ApplicationCommand{
 
 // Command to bot function map.
 var CommandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
-	"purge-verification":   ext.PurgeVerification,
-	"welcome":              ext.WelcomeUser,
-	"test-current-feature": ext.TestCurrentFeature,
-	"upgrade":              ext.UpgradeBot,
+	"purge-verification":   commands_management.PurgeVerification,
+	"welcome":              commands_moderation.WelcomeUser,
+	"test-current-feature": commands.TestCurrentFeature,
+	"upgrade":              commands_management.UpgradeBot,
+	"warn":                 commands_moderation.Warn,
+	"unwarn":               commands_moderation.Unwarn,
 	//"warn-user":            ext.WarnUserTest,
 	//"is-user-admin":         ext.IsUserAdmin,
 	//"test-dm-requester":     ext.TestDMRequester,

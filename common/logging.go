@@ -17,7 +17,8 @@ var (
 	canWriteToFile bool
 )
 
-// Creates the logging infrastrure for the program.
+// Creates the logging infrastructure for the program.
+// Initializes logging to a ./log/<datetime>.log file (if it can).
 func InitializeLogging() {
 	log.SetOutput(os.Stdout)
 

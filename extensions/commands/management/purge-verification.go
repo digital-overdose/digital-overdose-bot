@@ -1,4 +1,4 @@
-package ext
+package extensions
 
 import (
 	"fmt"
@@ -12,6 +12,9 @@ import (
 
 // Purges the Verification channel of lurkers (> 7 days) or warns them (> 5 days)
 func PurgeVerification(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	if ok := common.ShouldExecutionBeSkippedIfDev(true); ok {
+		return
+	}
 	// If triggered by user-interaction
 	if i != nil {
 		if ok, _ := common.CheckHasPermissions(i, s, discordgo.PermissionManageRoles); !ok {
@@ -19,9 +22,6 @@ func PurgeVerification(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		}
 	} else {
 		common.LogAndSend(":robot: :rotating_light: `/purge-verification` triggered by cron.", s)
-	}
-	if ok := common.ShouldExecutionBeSkippedIfDev(true); ok {
-		return
 	}
 
 	var (
