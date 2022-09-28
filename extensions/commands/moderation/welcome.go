@@ -62,11 +62,15 @@ func WelcomeUser(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		log.Printf("[x] Failed removing 'Verification' role from %v", usr_str)
 	}
 
+	// TODO CONVERT TO EMBED
+
 	if *common.MainChannelID != "" {
-		formatted_msg := fmt.Sprintf("Welcome <@%v>! Please remember the <#687239516800548894>, perhaps tell us something <#783109920240697414>, grab yourself some <#687232316061384779> and perhaps drop <#783110016076349450>!", opt.UserValue(nil).ID)
+		formatted_msg := fmt.Sprintf(`Welcome <@%v>! 
+Feel free to introduce yourself to the community in the <#783109920240697414> section and grab some <#687232316061384779> and <#887783566916866069>.
+Please remember the <#687239516800548894> and give us a shout if you need anything!`, opt.UserValue(nil).ID)
 
 		common.LogAndSend(fmt.Sprintf("[+] Welcomed %v in main channel.", usr_str), s)
-		//_, err := s.ChannelMessageSend(*common.DebugChannelID, formatted_msg)
+
 		_, err := s.ChannelMessageSend(*common.MainChannelID, formatted_msg)
 
 		if err != nil {

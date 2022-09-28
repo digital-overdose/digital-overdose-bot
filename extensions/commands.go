@@ -4,6 +4,9 @@ import (
 	commands "atomicnicos.me/digital-overdose-bot/extensions/commands"
 	commands_management "atomicnicos.me/digital-overdose-bot/extensions/commands/management"
 	commands_moderation "atomicnicos.me/digital-overdose-bot/extensions/commands/moderation"
+	commands_moderation_ban "atomicnicos.me/digital-overdose-bot/extensions/commands/moderation/ban"
+	commands_moderation_mute "atomicnicos.me/digital-overdose-bot/extensions/commands/moderation/mute"
+	commands_moderation_warn "atomicnicos.me/digital-overdose-bot/extensions/commands/moderation/warn"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -36,7 +39,7 @@ var Commands = []*discordgo.ApplicationCommand{
 			{
 				Type:        discordgo.ApplicationCommandOptionString,
 				Name:        "version",
-				Description: "`vx.x.x`: The version string of the release to be downloaded.`",
+				Description: "`x.x.x`: The version string of the release to be downloaded.`",
 				Required:    true,
 			},
 		},
@@ -51,6 +54,12 @@ var Commands = []*discordgo.ApplicationCommand{
 				Description: "The user to be warned.",
 				Required:    true,
 			},
+			{
+				Type:        discordgo.ApplicationCommandOptionString,
+				Name:        "reason",
+				Description: "The reason for the warn.",
+				Required:    true,
+			},
 		},
 	},
 	{
@@ -61,6 +70,114 @@ var Commands = []*discordgo.ApplicationCommand{
 				Type:        discordgo.ApplicationCommandOptionUser,
 				Name:        "user",
 				Description: "The user to have their last warning removed.",
+				Required:    true,
+			},
+			{
+				Type:        discordgo.ApplicationCommandOptionInteger,
+				Name:        "which",
+				Description: "Which of the warns should be removed.",
+				Required:    false,
+			},
+		},
+	},
+	{
+		Name:        "list-warns",
+		Description: "Lists the warns a user has gotten.",
+		Options: []*discordgo.ApplicationCommandOption{
+			{
+				Type:        discordgo.ApplicationCommandOptionUser,
+				Name:        "user",
+				Description: "The user to list the warnings of.",
+				Required:    true,
+			},
+		},
+	},
+	{
+		Name:        "mute",
+		Description: "Mutes a user.",
+		Options: []*discordgo.ApplicationCommandOption{
+			{
+				Type:        discordgo.ApplicationCommandOptionUser,
+				Name:        "user",
+				Description: "The user to be muted.",
+				Required:    true,
+			},
+			{
+				Type:        discordgo.ApplicationCommandOptionString,
+				Name:        "duration",
+				Description: "The duration of the mute. Is a duration string: '1.5h' or '2h45m'. Valid time units are 'm', 'h'.",
+				Required:    true,
+			},
+			{
+				Type:        discordgo.ApplicationCommandOptionString,
+				Name:        "reason",
+				Description: "The reason for the mute.",
+				Required:    false,
+			},
+		},
+	},
+	{
+		Name:        "unmute",
+		Description: "Unmutes a user (manually).",
+		Options: []*discordgo.ApplicationCommandOption{
+			{
+				Type:        discordgo.ApplicationCommandOptionUser,
+				Name:        "user",
+				Description: "The user to be unmuted.",
+				Required:    true,
+			},
+		},
+	},
+	{
+		Name:        "list-mutes",
+		Description: "Lists the mutes a user has gotten.",
+		Options: []*discordgo.ApplicationCommandOption{
+			{
+				Type:        discordgo.ApplicationCommandOptionUser,
+				Name:        "user",
+				Description: "The user to list the warnings of.",
+				Required:    true,
+			},
+		},
+	},
+	{
+		Name:        "ban",
+		Description: "Bans a user.",
+		Options: []*discordgo.ApplicationCommandOption{
+			{
+				Type:        discordgo.ApplicationCommandOptionUser,
+				Name:        "user",
+				Description: "The user to be banned.",
+				Required:    true,
+			},
+			{
+				Type:        discordgo.ApplicationCommandOptionString,
+				Name:        "reason",
+				Description: "The reason for the ban.",
+				Required:    true,
+			},
+		},
+	},
+	{
+		Name:        "unban",
+		Description: "Unbans a user",
+		Options: []*discordgo.ApplicationCommandOption{
+			{
+				Type:        discordgo.ApplicationCommandOptionUser,
+				Name:        "user",
+				Description: "The user to be unbanned.",
+				Required:    true,
+			},
+		},
+	},
+	{
+		Name:        "reason-ban",
+		Description: "Lists the reason that a user was banned for.",
+		Options: []*discordgo.ApplicationCommandOption{
+			{
+				Type:        discordgo.ApplicationCommandOptionString,
+				Name:        "user_id",
+				Description: "The ID of the user to get the ban warning for.",
 				Required:    true,
 			},
 		},
@@ -93,9 +210,13 @@ var CommandHandlers = map[string]func(s *discordgo.Session, i *discordgo.Interac
 	"welcome":              commands_moderation.WelcomeUser,
 	"test-current-feature": commands.TestCurrentFeature,
 	"upgrade":              commands_management.UpgradeBot,
-	"warn":                 commands_moderation.Warn,
-	"unwarn":               commands_moderation.Unwarn,
-	//"warn-user":            ext.WarnUserTest,
-	//"is-user-admin":         ext.IsUserAdmin,
-	//"test-dm-requester":     ext.TestDMRequester,
+	"warn":                 commands_moderation_warn.Warn,
+	"unwarn":               commands_moderation_warn.Unwarn,
+	"list-warns":           commands_moderation_warn.ListWarns,
+	"ban":                  commands_moderation_ban.Ban,
+	"unban":                commands_moderation_ban.Unban,
+	"reason-ban":           commands_moderation_ban.ReasonBan,
+	"mute":                 commands_moderation_mute.Mute,
+	"unmute":               commands_moderation_mute.Unmute,
+	"list-mutes":           commands_moderation_mute.ListMutes,
 }

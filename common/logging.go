@@ -35,8 +35,7 @@ func InitializeLogging() {
 	// Creates a MultiWriter (basically an output bifurcator) and assigns a series of output streams depending on write rights.
 	mw = io.MultiWriter()
 	if canWriteToFile {
-		err := errors.New("")
-		logFile, err = os.OpenFile(fmt.Sprintf("log/%v-bot.log", time.Now().Format("2006-01-02-15-04-05")), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		logFile, err := os.OpenFile(fmt.Sprintf("log/%v-bot.log", time.Now().Format("2006-01-02-15-04-05")), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 		if err != nil {
 			log.Fatalf("Error opening file: %v", err)
 		}

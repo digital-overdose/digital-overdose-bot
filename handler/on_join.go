@@ -17,7 +17,6 @@ func OnJoin(s *discordgo.Session, i *discordgo.GuildMemberAdd) {
 
 	embed := &discordgo.MessageEmbed{
 		Author:      &discordgo.MessageEmbedAuthor{},
-		Color:       0xAD7EC2,
 		Type:        discordgo.EmbedTypeRich,
 		Title:       "Welcome to the Digital Overdose Discord!",
 		Description: fmt.Sprintf("Hey there <@%v>, and welcome! To get started please take the time to do the following:", i.Member.User.ID),
