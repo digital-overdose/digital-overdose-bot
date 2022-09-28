@@ -37,6 +37,8 @@ UPGRADE=https://github.com/digital-overdose/digital-overdose-bot/releases/downlo
 
 ### Features (Future)
 
+- [ ] Cron job to check people that are muted.
+
 - [x] On Join message.
 - [ ] `/warn` ⇾ Warn a user for a behavior (user, reason)
 - [ ] `/unwarn` ⇾ Remove an attributed warn.

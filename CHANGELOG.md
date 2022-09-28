@@ -5,6 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.2.0] - N/A
+### Fixes
+- Issue #7: [Link to issue](https://github.com/digital-overdose/digital-overdose-bot/issues/7)
+
+### Added
+- Database
+- Warn functionality and storage
+- Initial mute functionality
+
+### Changed
+- Welcome message to something less wordy
 
 ## [Released]
 

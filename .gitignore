@@ -19,3 +19,5 @@
 # Build artifact
 build/*
 !build/.build
+
+*.db

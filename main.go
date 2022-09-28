@@ -7,6 +7,7 @@ Current features include:
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -16,6 +17,7 @@ import (
 
 	"atomicnicos.me/digital-overdose-bot/common"
 	cron "atomicnicos.me/digital-overdose-bot/cron"
+	database_utils "atomicnicos.me/digital-overdose-bot/db"
 	"atomicnicos.me/digital-overdose-bot/extensions"
 	"atomicnicos.me/digital-overdose-bot/handler"
 	"github.com/bwmarrin/discordgo"
@@ -45,6 +47,15 @@ func init() {
 
 func init() {
 	common.InitializeLogging()
+}
+
+func init() {
+	err := errors.New("")
+	database_utils.Database, err = database_utils.InitializeDatabase()
+	if err != nil {
+		log.Printf("DB INIT failed. ERR: %v", err)
+	}
+
 }
 
 func init() {

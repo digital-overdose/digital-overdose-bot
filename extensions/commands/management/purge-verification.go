@@ -141,7 +141,10 @@ func PurgeVerification(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	for _, candidate := range candidatesWarn {
 		common.LogAndSend(fmt.Sprintf("[----] User %v will be warned. Last interaction: <t:%v:f>", candidate.User.Username, timeLastSeen[candidate.User.ID].Unix()), s)
 	}
-	warnUsers(candidatesWarn, timeLastSeen, s)
+
+	if len(candidatesWarn) > 0 {
+		warnUsers(candidatesWarn, timeLastSeen, s)
+	}
 
 	// Writes a report to the specified mod-action-logs channel.
 	sendModActionLogsMessage(candidatesKick, candidatesWarn, s)
