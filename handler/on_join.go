@@ -41,9 +41,12 @@ func OnJoin(s *discordgo.Session, i *discordgo.GuildMemberAdd) {
 		Timestamp: time.Now().Format(time.RFC3339),
 	}
 
+	// TODO SEND THEM A PING
 	_, err := s.ChannelMessageSendEmbed(*common.VerificationChannelID, embed)
 
 	if err != nil {
 		common.LogAndSend("OnJoin - An error occured posting the embed.", s)
 	}
+
+	// TODO SEND EMBED TO MOD LOGS
 }

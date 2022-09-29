@@ -31,9 +31,12 @@ func Warn(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	reason, ok := optionMap["reason"]
-	if !ok {
-		return
+	reason := ""
+	opt_reason, reasonIsSet := optionMap["reason"]
+	if reasonIsSet {
+		reason = opt_reason.StringValue()
+	} else {
+		reason = "No reason provided."
 	}
 
 	member, err := s.GuildMember(*common.GuildID, user.UserValue(nil).ID)
@@ -42,19 +45,12 @@ func Warn(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		common.LogAndSend(fmt.Sprintf("[x] Could not warn: (ID: %v) because `%v`", user.UserValue(nil).ID, err), s)
 	}
 
-	_, err = (*database_utils.Database).Methods.InsertWarn.Exec(member.User.ID, time.Now(), reason.StringValue())
+	_, err = (*database_utils.Database).Methods.InsertWarn.Exec(member.User.ID, time.Now(), reason)
 
 	if err != nil {
 		common.LogAndSend(fmt.Sprintf("[x] Could not warn: '%v#%v' (ID: %v) because `%v`", member.User.Username, member.User.Discriminator, member.User.ID, err), s)
 		return
 	}
-
-	rows, err := (*database_utils.Database).Methods.ListWarns.Query(member.User.ID)
-	if err != nil {
-		return
-	}
-
-	defer rows.Close()
 
 	listWarns, err := getWarns(member.User.ID)
 	if err != nil {
@@ -62,25 +58,15 @@ func Warn(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	embed := &discordgo.MessageEmbed{
-		Author:      &discordgo.MessageEmbedAuthor{},
-		Type:        discordgo.EmbedTypeRich,
-		Title:       fmt.Sprintf("User `%v` has been warned.", member.User.Username),
-		Description: fmt.Sprintf("<@%v> - You have been warned by `%v#%v` for the following reason: '%v'", member.User.ID, i.Member.User.Username, i.Member.User.Discriminator, reason.StringValue()),
-		Fields: []*discordgo.MessageEmbedField{
-			{
-				Name:   "Statistics",
-				Value:  fmt.Sprintf("User '%v#%v' now has `%v` warnings.", member.User.Username, member.User.Discriminator, len(listWarns)),
-				Inline: true,
-			},
-		},
-		Footer:    &discordgo.MessageEmbedFooter{Text: fmt.Sprintf("ID: %v", member.User.ID)},
-		Thumbnail: &discordgo.MessageEmbedThumbnail{},
-		Timestamp: time.Now().Format(time.RFC3339),
+	numberOfWarns := 0
+	for _, w := range listWarns {
+		if !w.Revoked {
+			numberOfWarns += 1
+		}
 	}
 
-	_, err = s.ChannelMessageSendEmbed(i.ChannelID, embed)
-
+	public_embed := buildPublicEmbed(member, i.Member, reason)
+	_, err = s.ChannelMessageSendEmbed(i.ChannelID, public_embed)
 	if err != nil {
 		common.LogAndSend("Warn - An error occured posting the embed.", s)
 	}
@@ -91,27 +77,60 @@ func Warn(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	_, err = s.ChannelMessageSendEmbed(dmChannel.ID,
-		&discordgo.MessageEmbed{
-			Author:      &discordgo.MessageEmbedAuthor{},
-			Type:        discordgo.EmbedTypeRich,
-			Title:       "You have received a warning.",
-			Description: fmt.Sprintf("You have been warned by `%v#%v` for the following reason: '%v'", i.Member.User.Username, i.Member.User.Discriminator, reason.StringValue()),
-			Fields: []*discordgo.MessageEmbedField{
-				{
-					Name:   "Statistics",
-					Value:  fmt.Sprintf("This is warn number `%v`.", len(listWarns)),
-					Inline: true,
-				},
-			},
-			Footer:    &discordgo.MessageEmbedFooter{Text: fmt.Sprintf("ID: %v", member.User.ID)},
-			Thumbnail: &discordgo.MessageEmbedThumbnail{},
-			Timestamp: time.Now().Format(time.RFC3339),
-		})
-
+	dm_embed := buildDMEmbed(member, i.Member, reason, numberOfWarns)
+	_, err = s.ChannelMessageSendEmbed(dmChannel.ID, dm_embed)
 	if err != nil {
 		common.LogAndSend("Warn - An error occured DM'ing the embed.", s)
 	}
 
+	private_embed := buildPrivateEmbed(member, i.Member, reason, numberOfWarns)
+	_, err = s.ChannelMessageSendEmbed(*common.PrivateModLogsChannelID, private_embed)
+	if err != nil {
+		common.LogAndSend("Warn - An error occured posting the embed to the private channel.", s)
+	}
+
 	common.LogAndSend(fmt.Sprintf("[👮] Member '%v#%v' (ID: %v) has been warned by `%v#%v` (ID: %v).", member.User.Username, member.User.Discriminator, member.User.ID, i.Member.User.Username, i.Member.User.Discriminator, i.Member.User.ID), s)
+}
+
+func buildPublicEmbed(target *discordgo.Member, moderator *discordgo.Member, reason string) *discordgo.MessageEmbed {
+	return common.BuildEmbed(
+		fmt.Sprintf("User `%v` has been warned.", target.User.Username),
+		fmt.Sprintf("<@%v> - You have been warned by `%v#%v` for the following reason: '%v'", target.User.ID, moderator.User.Username, moderator.User.Discriminator, reason),
+		nil,
+		nil,
+	)
+}
+
+func buildDMEmbed(target *discordgo.Member, moderator *discordgo.Member, reason string, nth int) *discordgo.MessageEmbed {
+	return common.BuildEmbed(
+		"You have received a warning in Digital Overdose",
+		fmt.Sprintf("You have been warned by `%v#%v` for the following reason: '%v'", moderator.User.Username, moderator.User.Discriminator, reason),
+		[]*discordgo.MessageEmbedField{
+			{
+				Name:   "Statistics",
+				Value:  fmt.Sprintf("This is warn number `%v`.", nth),
+				Inline: true,
+			},
+		},
+		&discordgo.MessageEmbedFooter{Text: fmt.Sprintf("ID: %v", target.User.ID)},
+	)
+}
+
+func buildPrivateEmbed(target *discordgo.Member, moderator *discordgo.Member, reason string, nth int) *discordgo.MessageEmbed {
+	warnCount, _ := database_utils.GetTotalWarnsCount()
+	return common.BuildEmbed(
+		fmt.Sprintf("Warn | Case %v", warnCount),
+		fmt.Sprintf("Reason: \"%v\"", reason),
+		[]*discordgo.MessageEmbedField{
+			{
+				Name: "Target", Value: fmt.Sprintf("%v#%v (ID: %v)\n<@%v>", target.User.Username, target.User.Discriminator, target.User.ID, target.User.ID), Inline: true,
+			},
+			{
+				Name:   "Responsible Moderator",
+				Value:  fmt.Sprintf("%v#%v (ID: %v)\n<@%v>", moderator.User.Username, moderator.User.Discriminator, moderator.User.ID, moderator.User.ID),
+				Inline: true,
+			},
+		},
+		&discordgo.MessageEmbedFooter{Text: fmt.Sprintf("ID: %v", target.User.ID)},
+	)
 }

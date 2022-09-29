@@ -19,11 +19,14 @@ var (
 	DebugChannelWarning    = false
 
 	// Extensions
-	HumanRoleID       = flag.String("human", "", "The role assigned to humans.")
-	MemberRoleID      = flag.String("member", "", "The role assigned to members.")
-	MainChannelID     = flag.String("main", "", "The main channel.")
-	StaffChannelID    = flag.String("staff", "", "The staff channel.")
-	UpgradeReleaseURL = flag.String("upgrade", "", "The baseline path for bot upgrades.")
+	HumanRoleID              = flag.String("human", "", "The role assigned to humans.")
+	MemberRoleID             = flag.String("member", "", "The role assigned to members.")
+	MainChannelID            = flag.String("main", "", "The main channel.")
+	StaffChannelID           = flag.String("staff", "", "The staff channel.")
+	UpgradeReleaseURL        = flag.String("upgrade", "", "The baseline path for bot upgrades.")
+	MuteRoleID               = flag.String("mute", "", "The role assigned to members that are on timeout.")
+	PrivateModLogsChannelID  = flag.String("private-mod", "", "The channel where all the mod events are logged to.")
+	PrivateChatLogsChannelID = flag.String("private-chat", "", "The channel where all the chat events are logged to.")
 
 	CURRENTLY_DEV = flag.Bool("dev", false, "Whether or not the bot is run from a dev environment.")
 )
@@ -53,8 +56,8 @@ func LoadEnvOrFlags() {
 		references := []*string{GuildID, BotToken, VerificationRoleID, VerificationChannelID, ModActionLogsChannelID, ModActionLogsThreadID, DebugChannelID}
 
 		// EXTENSIONS
-		tokens = append(tokens, "HUMAN_ROLE_ID", "MEMBER_ROLE_ID", "MAIN_CHANNEL_ID", "STAFF_CHANNEL_ID", "UPGRADE_RELEASE_PATH")
-		references = append(references, HumanRoleID, MemberRoleID, MainChannelID, StaffChannelID, UpgradeReleaseURL)
+		tokens = append(tokens, "HUMAN_ROLE_ID", "MEMBER_ROLE_ID", "MAIN_CHANNEL_ID", "STAFF_CHANNEL_ID", "UPGRADE_RELEASE_PATH", "MUTE_ROLE_ID", "PRIVATE_MOD_LOGS_CHANNEL_ID", "PRIVATE_CHAT_LOGS_CHANNEL_ID")
+		references = append(references, HumanRoleID, MemberRoleID, MainChannelID, StaffChannelID, UpgradeReleaseURL, MuteRoleID, PrivateModLogsChannelID, PrivateChatLogsChannelID)
 
 		if len(tokens) != len(references) {
 			log.Fatalf("Mismatched Environment flags.")

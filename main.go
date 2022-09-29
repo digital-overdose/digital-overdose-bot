@@ -54,8 +54,8 @@ func init() {
 	database_utils.Database, err = database_utils.InitializeDatabase()
 	if err != nil {
 		log.Printf("DB INIT failed. ERR: %v", err)
+		os.Exit(125)
 	}
-
 }
 
 func init() {

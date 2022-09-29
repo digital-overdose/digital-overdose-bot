@@ -7,7 +7,7 @@ After=network.target network-online.target
 
 [Service]
 WorkingDirectory=/home/pi
-ExecStart=/home/pi/digital-overdose-bot --guild <GUILD_ID> --token <TOKEN> --role <VERIFICATION_ROLE> --wall <VERIFICATION_CHANNEL_ID> --mod <MOD_ACTION_LOGS_CHANNEL_ID> --mod-thread <MOD_ACTION_LOGS_THREAD_ID> --debug <DEBUG_CHANNEL_ID> --human <HUMAN_ROLE_ID> --member <MEMBER_ROLE_ID> --main <MAIN_CHANNEL_ID> --staff <ABUSE_CHANNEL_ID> --upgrade <UPGRADE_RELEASE_PATH>
+ExecStart=/home/pi/digital-overdose-bot --guild <GUILD_ID> --token <TOKEN> --role <VERIFICATION_ROLE> --wall <VERIFICATION_CHANNEL_ID> --mod <MOD_ACTION_LOGS_CHANNEL_ID> --mod-thread <MOD_ACTION_LOGS_THREAD_ID> --debug <DEBUG_CHANNEL_ID> --human <HUMAN_ROLE_ID> --member <MEMBER_ROLE_ID> --main <MAIN_CHANNEL_ID> --staff <ABUSE_CHANNEL_ID> --upgrade <UPGRADE_RELEASE_PATH> --mute <MUTE_ROLE_ID> --private-mod <PRIVATE_MOD_LOGS_CHANNEL_ID> --private-chat <PRIVATE_CHAT_LOGS_CHANNEL_ID>
 Restart=always
 RestartSec=10
 KillSignal=SIGINT
