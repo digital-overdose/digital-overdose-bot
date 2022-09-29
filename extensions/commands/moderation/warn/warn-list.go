@@ -3,7 +3,6 @@ package extensions
 import (
 	"fmt"
 	"log"
-	"time"
 
 	"atomicnicos.me/digital-overdose-bot/common"
 	database_utils "atomicnicos.me/digital-overdose-bot/db"
@@ -33,7 +32,7 @@ func ListWarns(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	member, err := s.GuildMember(*common.GuildID, user.UserValue(nil).ID)
 
 	if err != nil {
-		common.LogAndSend(fmt.Sprintf("[x] Could not warn: (ID: %v) because `%v`", user.UserValue(nil).ID, err), s)
+		common.LogAndSend(fmt.Sprintf("[x] Could not retrieve warn list for (ID: %v) because `%v`", user.UserValue(nil).ID, err), s)
 	}
 
 	log.Printf("[+] Retrieving warns for member '%v#%v' (ID: %v)", member.User.Username, member.User.Discriminator, member.User.ID)
@@ -47,29 +46,30 @@ func ListWarns(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	summary := ""
 	description := fmt.Sprintf("User `%v#%v` has received the following warnings:", member.User.Username, member.User.Discriminator)
 	for i, warn := range listWarns {
-		summary += fmt.Sprintf("#%v: \"%v\" on <t:%v:f>\n", i+1, warn.WarnReason, warn.WarnTime.Unix())
+		revoked := ""
+		if warn.Revoked {
+			revoked = " *(revoked)*"
+		}
+		summary += fmt.Sprintf("#%v: \"%v\" on <t:%v:f>%v\n", i+1, warn.WarnReason, warn.WarnTime.Unix(), revoked)
+
 	}
 	if len(listWarns) == 0 {
 		description = fmt.Sprintf("User `%v#%v` has received no warnings.", member.User.Username, member.User.Discriminator)
 		summary = "No warns recorded for this user."
 	}
 
-	embed := &discordgo.MessageEmbed{
-		Author:      &discordgo.MessageEmbedAuthor{},
-		Type:        discordgo.EmbedTypeRich,
-		Title:       fmt.Sprintf("Warnings for user `%v`.", member.User.Username),
-		Description: description,
-		Fields: []*discordgo.MessageEmbedField{
+	embed := common.BuildEmbed(
+		fmt.Sprintf("Warnings for user `%v`.", member.User.Username),
+		description,
+		[]*discordgo.MessageEmbedField{
 			{
 				Name:   "Summary",
 				Value:  summary,
 				Inline: false,
 			},
 		},
-		Footer:    &discordgo.MessageEmbedFooter{Text: fmt.Sprintf("ID: %v", member.User.ID)},
-		Thumbnail: &discordgo.MessageEmbedThumbnail{},
-		Timestamp: time.Now().Format(time.RFC3339),
-	}
+		&discordgo.MessageEmbedFooter{Text: fmt.Sprintf("ID: %v", member.User.ID)},
+	)
 
 	_, err = s.ChannelMessageSendEmbed(i.ChannelID, embed)
 
@@ -90,7 +90,7 @@ func getWarns(userID string) ([]database_utils.Warn, error) {
 	listWarns := []database_utils.Warn{}
 	for rows.Next() {
 		i := database_utils.Warn{}
-		err := rows.Scan(&i.ID, &i.UserID, &i.WarnTime, &i.WarnReason)
+		err := rows.Scan(&i.ID, &i.UserID, &i.WarnTime, &i.WarnReason, &i.Revoked)
 		if err != nil {
 			return nil, err
 		}
