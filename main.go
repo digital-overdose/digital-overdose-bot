@@ -75,7 +75,7 @@ func init() {
 
 		log.Printf("[--] Registered job '%v': '%v'", job.Name, job.CronString)
 		schedulers[i].Cron(job.CronString).Do(func() {
-			log.Printf("[+] Executing cron job '%v':'%v", job.Name, &job.Name)
+			log.Printf("[+] Executing cron job '%v': '%v'", job.Name, job.CronString)
 			job.Job(s, nil)
 		})
 		schedulers[i].StartAsync()

@@ -106,7 +106,7 @@ var Commands = []*discordgo.ApplicationCommand{
 				Type:        discordgo.ApplicationCommandOptionString,
 				Name:        "duration",
 				Description: "The duration of the mute. Is a duration string: '1.5h' or '2h45m'. Valid time units are 'm', 'h'.",
-				Required:    true,
+				Required:    false,
 			},
 			{
 				Type:        discordgo.ApplicationCommandOptionString,
@@ -217,6 +217,6 @@ var CommandHandlers = map[string]func(s *discordgo.Session, i *discordgo.Interac
 	"unban":                commands_moderation_ban.Unban,
 	"reason-ban":           commands_moderation_ban.ReasonBan,
 	"mute":                 commands_moderation_mute.Mute,
-	"unmute":               commands_moderation_mute.Unmute,
+	"unmute":               commands_moderation_mute.UnmuteManual,
 	"list-mutes":           commands_moderation_mute.ListMutes,
 }

@@ -46,12 +46,7 @@ func ListMutes(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	summary := ""
 	description := fmt.Sprintf("User `%v#%v` has received the following mutes:", member.User.Username, member.User.Discriminator)
 	for i, mute := range listMutes {
-		fmt.Printf("ROLES REMOVED: %v", mute.Roles)
-		revoked := ""
-		if mute.Revoked {
-			revoked = " *(revoked)*"
-		}
-		summary += fmt.Sprintf("#%v: \"%v\" on <t:%v:f>%v\n", i+1, mute.MuteReason, mute.MuteTime.Unix(), revoked)
+		summary += fmt.Sprintf("#%v: \"%v\" on <t:%v:f>\n", i+1, mute.MuteReason, mute.MuteTime.Unix())
 	}
 
 	if len(listMutes) == 0 {
@@ -91,7 +86,6 @@ func getMutes(userID string) ([]database_utils.Mute, error) {
 	listMutes := []database_utils.Mute{}
 	for rows.Next() {
 		i := database_utils.Mute{}
-		// "SELECT id, user_id, mute_time, expiration_time, mute_reason, roles, revoked FROM mutes WHERE user_id=?;
 		err := rows.Scan(&i.ID, &i.UserID, &i.MuteTime, &i.MuteExpiration, &i.MuteReason, &i.Roles, &i.Revoked)
 		if err != nil {
 			return nil, err

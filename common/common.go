@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 
+	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
 )
 
@@ -86,5 +87,21 @@ func LoadEnvOrFlags() {
 
 	if len(missing) > 0 {
 		log.Fatalf("One or more parameters missing: %v", missing[0:len(missing)-2])
+	}
+}
+
+func SendMessage(s *discordgo.Session, channel string, message string) {
+	if channel != "" {
+		s.ChannelMessageSend(channel, message)
+	} else {
+		log.Printf("[❌] ERROR - Could not send message to channel because it is undefined.")
+	}
+}
+
+func SendEmbed(s *discordgo.Session, channel string, message *discordgo.MessageEmbed) {
+	if channel != "" {
+		s.ChannelMessageSendEmbed(channel, message)
+	} else {
+		log.Printf("[❌] ERROR - Could not send message to channel because it is undefined.")
 	}
 }

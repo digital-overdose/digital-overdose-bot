@@ -6,6 +6,8 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+// Helper function to help an embed without all of the annoying fields.
+// One can simply provide a selection of fields and a footer on an "as needed" basis.
 func BuildEmbed(
 	title string,
 	description string,
