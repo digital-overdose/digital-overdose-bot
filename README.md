@@ -30,7 +30,14 @@ MAIN_CHANNEL_ID=
 STAFF_CHANNEL_ID=
 
 # ADDITIONAL FEATURE: upgrade.go
-UPGRADE=https://github.com/digital-overdose/digital-overdose-bot/releases/download/v%v/digital-overdose-bot-v%v-linux-amd64
+UPGRADE_RELEASE_PATH=https://github.com/digital-overdose/digital-overdose-bot/releases/download/v%v/digital-overdose-bot-v%v-linux-amd64
+
+# ADDITIONAL FEATURE: Fully Comprehensive Mod Logs
+PRIVATE_MOD_LOGS_CHANNEL_ID=
+PRIVATE_CHAT_LOGS_CHANNEL_ID=
+
+# ADDITIONAL FEATURE: Mutes (mute-new.go, mute-remove.go, mute-list.go)
+MUTE_ROLE_ID=
 ```
 
 ## TODO
