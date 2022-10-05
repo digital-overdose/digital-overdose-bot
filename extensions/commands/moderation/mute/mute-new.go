@@ -49,7 +49,6 @@ func Mute(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	reason := ""
 	opt_reason, reasonIsSet := optionMap["reason"]
-	log.Printf("OPT: %v RNS: %v", opt_reason, reasonIsSet)
 	if reasonIsSet {
 		reason = opt_reason.StringValue()
 	} else {
@@ -117,7 +116,7 @@ func buildPrivateAInsertMuteEmbed(target *discordgo.Member, moderator *discordgo
 	muteCount, _ := database_utils.GetTotalMutesCount()
 	roleString := ""
 	for i, r := range roles {
-		roleString += fmt.Sprintf("<#%v>", r)
+		roleString += fmt.Sprintf("<@%v>", r)
 		if i != len(roles)-1 {
 			roleString += ", "
 		}
