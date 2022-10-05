@@ -144,7 +144,7 @@ func restoreUser(s *discordgo.Session, userID string, roles_encoded string, mute
 func buildPrivateMuteRemoveEmbed(userID string, automated bool, mute_case int, roles []string) *discordgo.MessageEmbed {
 	roleString := ""
 	for i, r := range roles {
-		roleString += fmt.Sprintf("<#%v>", r)
+		roleString += fmt.Sprintf("<@%v>", r)
 		if i != len(roles)-1 {
 			roleString += ", "
 		}
