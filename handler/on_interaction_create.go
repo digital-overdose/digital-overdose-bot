@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"atomicnicos.me/digital-overdose-bot/extensions"
+	"atomicmaya.me/digital-overdose-bot/extensions"
 
 	"github.com/bwmarrin/discordgo"
 )

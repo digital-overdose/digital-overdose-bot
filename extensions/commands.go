@@ -1,12 +1,12 @@
 package extensions
 
 import (
-	commands "atomicnicos.me/digital-overdose-bot/extensions/commands"
-	commands_management "atomicnicos.me/digital-overdose-bot/extensions/commands/management"
-	commands_moderation "atomicnicos.me/digital-overdose-bot/extensions/commands/moderation"
-	commands_moderation_ban "atomicnicos.me/digital-overdose-bot/extensions/commands/moderation/ban"
-	commands_moderation_mute "atomicnicos.me/digital-overdose-bot/extensions/commands/moderation/mute"
-	commands_moderation_warn "atomicnicos.me/digital-overdose-bot/extensions/commands/moderation/warn"
+	commands "atomicmaya.me/digital-overdose-bot/extensions/commands"
+	commands_management "atomicmaya.me/digital-overdose-bot/extensions/commands/management"
+	commands_moderation "atomicmaya.me/digital-overdose-bot/extensions/commands/moderation"
+	commands_moderation_ban "atomicmaya.me/digital-overdose-bot/extensions/commands/moderation/ban"
+	commands_moderation_mute "atomicmaya.me/digital-overdose-bot/extensions/commands/moderation/mute"
+	commands_moderation_warn "atomicmaya.me/digital-overdose-bot/extensions/commands/moderation/warn"
 	"github.com/bwmarrin/discordgo"
 )
 

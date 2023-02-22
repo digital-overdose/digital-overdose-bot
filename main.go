@@ -15,11 +15,11 @@ import (
 	"os/signal"
 	"time"
 
-	"atomicnicos.me/digital-overdose-bot/common"
-	cron "atomicnicos.me/digital-overdose-bot/cron"
-	database_utils "atomicnicos.me/digital-overdose-bot/db"
-	"atomicnicos.me/digital-overdose-bot/extensions"
-	"atomicnicos.me/digital-overdose-bot/handler"
+	"atomicmaya.me/digital-overdose-bot/common"
+	cron "atomicmaya.me/digital-overdose-bot/cron"
+	database_utils "atomicmaya.me/digital-overdose-bot/db"
+	"atomicmaya.me/digital-overdose-bot/extensions"
+	"atomicmaya.me/digital-overdose-bot/handler"
 	"github.com/bwmarrin/discordgo"
 	"github.com/go-co-op/gocron"
 )

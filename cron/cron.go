@@ -1,10 +1,10 @@
 package cron
 
 import (
-	commands_management "atomicnicos.me/digital-overdose-bot/extensions/commands/management"
-	commands_moderation_mute "atomicnicos.me/digital-overdose-bot/extensions/commands/moderation/mute"
+	commands_management "atomicmaya.me/digital-overdose-bot/extensions/commands/management"
+	commands_moderation_mute "atomicmaya.me/digital-overdose-bot/extensions/commands/moderation/mute"
 
-	"atomicnicos.me/digital-overdose-bot/common"
+	"atomicmaya.me/digital-overdose-bot/common"
 	"github.com/bwmarrin/discordgo"
 )
 

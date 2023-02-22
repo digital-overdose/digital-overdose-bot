@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"atomicnicos.me/digital-overdose-bot/common"
+	"atomicmaya.me/digital-overdose-bot/common"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -65,7 +65,7 @@ func WelcomeUser(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	// TODO CONVERT TO EMBED
 
 	if *common.MainChannelID != "" {
-		formatted_msg := fmt.Sprintf(`Welcome <@%v>! 
+		formatted_msg := fmt.Sprintf(`Welcome <@%v>!
 Feel free to introduce yourself to the community in the <#783109920240697414> section and grab some <#687232316061384779> and <#887783566916866069>.
 Please remember the <#687239516800548894> and give us a shout if you need anything!`, opt.UserValue(nil).ID)
 

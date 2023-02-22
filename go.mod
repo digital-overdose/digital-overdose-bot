@@ -1,4 +1,4 @@
-module atomicnicos.me/digital-overdose-bot
+module atomicmaya.me/digital-overdose-bot
 
 go 1.19
 
