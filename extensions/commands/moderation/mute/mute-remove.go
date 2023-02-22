@@ -6,8 +6,8 @@ import (
 	"log"
 	"time"
 
-	"atomicnicos.me/digital-overdose-bot/common"
-	database_utils "atomicnicos.me/digital-overdose-bot/db"
+	"atomicmaya.me/digital-overdose-bot/common"
+	database_utils "atomicmaya.me/digital-overdose-bot/db"
 	"github.com/bwmarrin/discordgo"
 )
 

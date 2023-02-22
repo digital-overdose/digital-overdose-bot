@@ -3,7 +3,7 @@ package handler
 import (
 	"fmt"
 
-	"atomicnicos.me/digital-overdose-bot/common"
+	"atomicmaya.me/digital-overdose-bot/common"
 	"github.com/bwmarrin/discordgo"
 )
 
