@@ -22,7 +22,7 @@ const (
 	USER_RBAC_FAIL    EventType = 0x0B
 
 	USER_MESSAGE_WRITE  EventType = 0x10
-	USER_MESSAGE_EDIT   EventType = 0x11
+	USER_MESSAGE_UPDATE EventType = 0x11
 	USER_MESSAGE_DELETE EventType = 0x12
 
 	USER_VC_JOIN         EventType = 0x20

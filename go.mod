@@ -1,6 +1,6 @@
 module atomicmaya.me/digital-overdose-bot
 
-go 1.19
+go 1.21
 
 require (
 	github.com/bwmarrin/discordgo v0.28.1

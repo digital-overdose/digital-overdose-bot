@@ -1,6 +1,7 @@
 package common
 
 import (
+	"encoding/base64"
 	"flag"
 	"fmt"
 	"log"
@@ -113,4 +114,9 @@ func FormatUsername(u *discordgo.User) string {
 	} else {
 		return fmt.Sprintf("%s#%s", u.Username, u.Discriminator)
 	}
+}
+
+func EncodeMessage(m string, n int) string {
+	bytes := []byte(m[:min(n, len(m))])
+	return base64.StdEncoding.EncodeToString(bytes)
 }

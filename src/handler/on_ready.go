@@ -16,6 +16,6 @@ func OnReady(s *discordgo.Session, r *discordgo.Ready) {
 
 	_, err := (*database_utils.Database).Methods.InsertOpsEvent.Exec(database_utils.SYSTEM_START, time.Now(), fmt.Sprintf("Running in version: v%v", common.VERSION))
 	if err != nil {
-		log.Printf("ERROR IN ONREADY: %w", err)
+		log.Printf("ERROR IN ONREADY: %v", err)
 	}
 }

@@ -63,6 +63,7 @@ func init() {
 	s.AddHandler(handler.OnReady)
 	s.AddHandler(handler.OnInteractionCreate)
 	s.AddHandler(handler.OnMessage)
+	s.AddHandler(handler.OnMessageUpdate)
 	s.AddHandler(handler.OnJoin)
 	s.AddHandler(handler.OnLeave)
 }
