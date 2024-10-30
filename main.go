@@ -13,13 +13,14 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"syscall"
 	"time"
 
-	"atomicmaya.me/digital-overdose-bot/common"
-	cron "atomicmaya.me/digital-overdose-bot/cron"
-	database_utils "atomicmaya.me/digital-overdose-bot/db"
-	"atomicmaya.me/digital-overdose-bot/extensions"
-	"atomicmaya.me/digital-overdose-bot/handler"
+	"atomicmaya.me/digital-overdose-bot/src/common"
+	cron "atomicmaya.me/digital-overdose-bot/src/cron"
+	database_utils "atomicmaya.me/digital-overdose-bot/src/db"
+	"atomicmaya.me/digital-overdose-bot/src/extensions"
+	"atomicmaya.me/digital-overdose-bot/src/handler"
 	"github.com/bwmarrin/discordgo"
 	"github.com/go-co-op/gocron"
 )
@@ -63,6 +64,7 @@ func init() {
 	s.AddHandler(handler.OnInteractionCreate)
 	s.AddHandler(handler.OnMessage)
 	s.AddHandler(handler.OnJoin)
+	s.AddHandler(handler.OnLeave)
 }
 
 // Initializes cron engine, and subsequently registers scheduled functions
@@ -105,14 +107,13 @@ func main() {
 			log.Panicf("Cannot create '%v' command: %v", v.Name, err)
 		}
 		registeredCommands[i] = cmd
+		log.Printf("Added command '%v'\n", v.Name)
 	}
-
 	defer s.Close()
 
 	// CTRL+C Signal Handler
 	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, os.Interrupt)
-	signal.Notify(stop, os.Kill)
+	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
 	log.Println("Press Ctrl+C to exit")
 
 	common.LogAndSend(fmt.Sprintf(":robot::rotating_light: is currently running on version `%v%v", common.VERSION, func() string {
@@ -125,8 +126,6 @@ func main() {
 
 	<-stop
 
-	log.Println("")
-
 	// Unregisters the commands in the designated server.
 	if *common.RemoveCommands {
 		log.Println("Removing commands...")
@@ -135,6 +134,7 @@ func main() {
 			if err != nil {
 				log.Panicf("Cannot delete '%v' command: %v", v.Name, err)
 			}
+			log.Printf("Removed command '%v'\n", v.Name)
 		}
 	}
 

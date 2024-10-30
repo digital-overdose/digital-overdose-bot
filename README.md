@@ -2,7 +2,7 @@
 
 ## HOW TO RUN
 
-### WITH `.env`
+### WITH `./env/.env`
 
 Run with `go run .`
 
@@ -10,35 +10,9 @@ Run with `go run .`
 
 Run with `go run . --guild <GUILD_ID> --token <TOKEN> --role <VERIFICATION_ROLE> --wall <VERIFICATION_CHANNEL_ID> --mod <MOD_ACTION_LOGS_CHANNEL_ID> --mod-thread <MOD_ACTION_LOGS_THREAD_ID> --debug <DEBUG_CHANNEL_ID> --human <HUMAN_ROLE_ID> --member <MEMBER_ROLE_ID> --main <MAIN_CHANNEL_ID> --staff <ABUSE_CHANNEL_ID> --upgrade <UPGRADE_RELEASE_PATH>`
 
-## DEMO `.env`
+## Template `./env/.env`
 
-```txt
-GUILD=
-TOKEN=
-VERIFICATION_ROLE_ID=
-VERIFICATION_CHANNEL_ID=
-MOD_ACTION_CHANNEL_ID=
-MOD_ACTION_THREAD_ID=
-DEBUG_CHANNEL_ID=
-
-# ADDITIONAL FEATURE: welcome.go
-HUMAN_ROLE_ID=
-MEMBER_ROLE_ID=
-MAIN_CHANNEL_ID=
-
-# ADDITIONAL FEATURE: Abuse Warning
-STAFF_CHANNEL_ID=
-
-# ADDITIONAL FEATURE: upgrade.go
-UPGRADE_RELEASE_PATH=https://github.com/digital-overdose/digital-overdose-bot/releases/download/v%v/digital-overdose-bot-v%v-linux-amd64
-
-# ADDITIONAL FEATURE: Fully Comprehensive Mod Logs
-PRIVATE_MOD_LOGS_CHANNEL_ID=
-PRIVATE_CHAT_LOGS_CHANNEL_ID=
-
-# ADDITIONAL FEATURE: Mutes (mute-new.go, mute-remove.go, mute-list.go)
-MUTE_ROLE_ID=
-```
+See [template.env](./env/template.env)
 
 ## TODO
 
@@ -52,6 +26,7 @@ MUTE_ROLE_ID=
 - [ ] `/ban` ⇾ Ban a user for a behavior (user, reason) + DM.
 - [ ] `/unban` ⇾ Unban someone
 - [ ] `/stats` ⇾ Number of people interacting over 2 weeks. Channel usage. Keep message ID in a file? (Cron)
+- [x] Refactor Database schema.
 
 #### Reqs
 

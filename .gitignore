@@ -13,11 +13,11 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
-*.log
 .env
 
 # Build artifact
 build/*
-!build/.build
-
+log/*
+!*/.gitkeep
 *.db
+*.db-journal
