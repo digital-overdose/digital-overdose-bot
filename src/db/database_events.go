@@ -38,7 +38,7 @@ const (
 	CRON_SYSTEM_END_LOG   EventType = 0xC0
 
 	CRON_MOD_START_CLEAN EventType = 0xD0
-	CRON_MOD_END_CLEAN   EventType = 0xD2
+	CRON_MOD_END_CLEAN   EventType = 0xE0
 	CRON_MOD_START_PRUNE EventType = 0xD1
 	CRON_MOD_END_PRUNE   EventType = 0xE1
 )

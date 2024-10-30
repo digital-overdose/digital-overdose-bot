@@ -64,6 +64,7 @@ func init() {
 	s.AddHandler(handler.OnInteractionCreate)
 	s.AddHandler(handler.OnMessage)
 	s.AddHandler(handler.OnMessageUpdate)
+	s.AddHandler(handler.OnMessageDelete)
 	s.AddHandler(handler.OnJoin)
 	s.AddHandler(handler.OnLeave)
 }
@@ -126,6 +127,8 @@ func main() {
 	}()), s)
 
 	<-stop
+
+	_, err = (*database_utils.Database).Methods.InsertOpsEvent.Exec(database_utils.SYSTEM_STOP, time.Now(), nil)
 
 	// Unregisters the commands in the designated server.
 	if *common.RemoveCommands {

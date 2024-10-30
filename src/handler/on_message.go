@@ -11,7 +11,6 @@ import (
 )
 
 func OnMessage(s *discordgo.Session, m *discordgo.MessageCreate) {
-	log.Println("ONMESSAGE")
 	channel, err := s.Channel(m.ChannelID)
 	if err != nil {
 		log.Printf("ERROR IN ONMESSAGE: %v", err)
@@ -30,7 +29,6 @@ func OnMessage(s *discordgo.Session, m *discordgo.MessageCreate) {
 }
 
 func OnMessageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
-	log.Println("ONMESSAGEUPDATE")
 	channel, err := s.Channel(m.ChannelID)
 	if err != nil {
 		log.Printf("ERROR IN ONMESSAGEUPDATE: %v", err)
@@ -45,5 +43,25 @@ func OnMessageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 	)
 	if err != nil {
 		log.Printf("ERROR IN ONMESSAGEUPDATE: %v", err)
+	}
+}
+
+func OnMessageDelete(s *discordgo.Session, m *discordgo.MessageDelete) {
+	channel, err := s.Channel(m.ChannelID)
+	if err != nil {
+		log.Printf("ERROR IN ONMESSAGEDELETE: %v", err)
+	}
+
+	fmt.Printf("%+v\n", m)
+
+	_, err = (*database_utils.Database).Methods.InsertUserEvent.Exec(
+		database_utils.USER_MESSAGE_DELETE,
+		time.Now(),
+		m.Author.ID, common.FormatUsername(m.Author),
+		channel.ID, fmt.Sprintf("#%v (<#%v>)", channel.Name, channel.ID),
+		fmt.Sprintf("ID %v\nContent (%d): '%v'", m.ID, len(m.Content), common.EncodeMessage(m.Content, 100)),
+	)
+	if err != nil {
+		log.Printf("ERROR IN ONMESSAGEDELETE: %v", err)
 	}
 }
