@@ -1,9 +1,6 @@
 package common
 
 import (
-	"fmt"
-	"log"
-
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -18,8 +15,8 @@ func CheckHasPermissions(i *discordgo.InteractionCreate, s *discordgo.Session, p
 			},
 		})
 
-		formattedMessage := fmt.Sprintf("[👁] User '%v' (ID: %v) unsuccessfully used the command '%v'.", FormatUsername(i.Member.User), i.Member.User.ID, i.ApplicationCommandData().Name)
-		LogAndSend(formattedMessage, s, *StaffChannelID)
+		formattedMessage := Log("[👁] User '%v' (ID: %v) unsuccessfully used the command '%v'.", FormatUsername(i.Member.User), i.Member.User.ID, i.ApplicationCommandData().Name)
+		LogToServer(formattedMessage, s, *StaffChannelID)
 
 		return false, err
 	}
@@ -32,7 +29,7 @@ func CheckHasPermissions(i *discordgo.InteractionCreate, s *discordgo.Session, p
 		},
 	})
 
-	log.Printf("[👁] User '%v' (ID: %v) successfully used the command '%v'.", FormatUsername(i.Member.User), i.Member.User.ID, i.ApplicationCommandData().Name)
+	Log("[👁] User '%v' (ID: %v) successfully used the command '%v'.", FormatUsername(i.Member.User), i.Member.User.ID, i.ApplicationCommandData().Name)
 
 	return true, nil
 }

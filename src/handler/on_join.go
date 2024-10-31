@@ -12,19 +12,19 @@ func OnJoin(s *discordgo.Session, i *discordgo.GuildMemberAdd) {
 		return
 	}
 
-	common.LogAndSend(fmt.Sprintf("[+] New user has joined the server: '%v#%v' (%v)", i.Member.User.Username, i.Member.User.Discriminator, i.Member.User.ID), s)
+	common.LogToServer(common.Log("[+] New user has joined the server: '%v#%v' (%v)", i.Member.User.Username, i.Member.User.Discriminator, i.Member.User.ID), s)
 
 	i.Member.Roles = append(i.Member.Roles, *common.VerificationRoleID)
 
 	publicEmbed := publicOnJoinEmbed(i.Member)
 	_, err := s.ChannelMessageSendEmbed(*common.VerificationChannelID, publicEmbed)
 	if err != nil {
-		common.LogAndSend(fmt.Sprintf("[❌] OnJoin - An error occured posting the embed: \"%v\"", err), s)
+		common.LogToServer(common.Log("[❌] OnJoin - An error occured posting the embed: \"%v\"", err), s)
 	}
 
 	_, err = s.ChannelMessageSend(*common.VerificationChannelID, fmt.Sprintf("<@%v> ^", i.Member.User.ID))
 	if err != nil {
-		common.LogAndSend(fmt.Sprintf("[❌] OnJoin - An error occured posting the embed: \"%v\"", err), s)
+		common.LogToServer(common.Log("[❌] OnJoin - An error occured posting the embed: \"%v\"", err), s)
 	}
 
 	_, err = s.ChannelMessageSendEmbed(*common.PrivateModLogsChannelID, privateOnJoinEmbed(i.Member))

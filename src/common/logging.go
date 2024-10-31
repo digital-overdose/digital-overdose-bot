@@ -20,6 +20,7 @@ var (
 // Creates the logging infrastructure for the program.
 // Initializes logging to a ./log/<datetime>.log file (if it can).
 func InitializeLogging() {
+	log.SetFlags(log.LUTC)
 	log.SetOutput(os.Stdout)
 
 	// Checks whether or not the program has sufficient rights to create files.
@@ -35,7 +36,7 @@ func InitializeLogging() {
 	// Creates a MultiWriter (basically an output bifurcator) and assigns a series of output streams depending on write rights.
 	mw = io.MultiWriter()
 	if canWriteToFile {
-		logFile, err := os.OpenFile(fmt.Sprintf("log/%v-bot.log", time.Now().Format("2006-01-02-15-04-05")), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		logFile, err := os.OpenFile(fmt.Sprintf("log/%v-bot.log", time.Now().UTC().Format("2006-01-02-15-04-05Z")), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 		if err != nil {
 			log.Fatalf("Error opening file: %v", err)
 		}
@@ -53,7 +54,7 @@ func PaginateLog(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	LogAndSend(":robot: :rotating_light: `log-pagination` triggered by cron.", s)
+	LogToServer(":robot: :rotating_light: `log-pagination` triggered by cron.", s)
 
 	log.SetOutput(os.Stdout)
 	err := logFile.Close()
@@ -61,18 +62,24 @@ func PaginateLog(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		log.Printf("Error closing file: %v", err)
 	}
 
-	logFile, err = os.OpenFile(fmt.Sprintf("log/%v-bot.log", time.Now().Format("2006-01-02-15-04-05")), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	logFile, err = os.OpenFile(fmt.Sprintf("log/%v-bot.log", time.Now().UTC().Format("2006-01-02-15-04-05Z")), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatalf("Error opening file: %v", err)
 	}
-	mw = io.MultiWriter(os.Stdout, logFile)
+	mw = io.MultiWriter( /* os.Stdout, */ logFile)
 	log.SetOutput(mw)
 }
 
-// Writes the message to the application log and the debug channel, if it is set.
-func LogAndSend(message string, s *discordgo.Session, nonDefaultChannelID ...string) string {
-	log.Print(message)
+func Log(format string, a ...any) string {
+	v := []any{time.Now().UTC().Format("2006-01-02 15:04:05Z")}
+	v = append(v, a...)
+	log.Printf("[%s] "+format, v...)
+	// fmt.Printf("[%s] "+format+"\n", v...)
+	return fmt.Sprintf("[%s] "+format, v...)
+}
 
+// Writes the message to the debug channel, if it is set.
+func LogToServer(message string, s *discordgo.Session, nonDefaultChannelID ...string) string {
 	if len(nonDefaultChannelID) > 0 && len(nonDefaultChannelID[0]) > 0 {
 		msg, _ := s.ChannelMessageSend(nonDefaultChannelID[0], message)
 		return msg.ID
@@ -82,7 +89,7 @@ func LogAndSend(message string, s *discordgo.Session, nonDefaultChannelID ...str
 		msg, _ := s.ChannelMessageSend(*DebugChannelID, message)
 		return msg.ID
 	} else if !DebugChannelWarning {
-		log.Print("DEBUG_CHANNEL_ID / --debug was not defined, skipping all debug message forwarding.")
+		Log("DEBUG_CHANNEL_ID / --debug was not defined, skipping all debug message forwarding.")
 	}
 
 	return ""

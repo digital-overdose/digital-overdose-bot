@@ -21,7 +21,7 @@ func PurgeVerification(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			return
 		}
 	} else {
-		common.LogAndSend(":robot: :rotating_light: `/purge-verification` triggered by cron.", s)
+		common.LogToServer(":robot: :rotating_light: `/purge-verification` triggered by cron.", s)
 	}
 
 	var (
@@ -44,7 +44,7 @@ func PurgeVerification(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		log.Panicf("Unable to get Guild %v: %v", *common.GuildID, err)
 	}
 
-	common.LogAndSend("[+] Starting Member Scan...", s)
+	common.LogToServer(common.Log("[+] Starting Member Scan..."), s)
 
 	// Retrieves a list of all the server members.
 	for listing {
@@ -53,7 +53,7 @@ func PurgeVerification(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			log.Panicf("Unable to get Members of Guild %v: %v", *common.GuildID, err)
 		}
 
-		common.LogAndSend(fmt.Sprintf("\tGot %v Members from Guild %v!", len(members), g.ID), s)
+		common.LogToServer(common.Log("\tGot %v Members from Guild %v!", len(members), g.ID), s)
 
 		for _, m := range members {
 			for _, r := range m.Roles {
@@ -73,11 +73,11 @@ func PurgeVerification(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		}
 	}
 
-	common.LogAndSend("[+] Finished Member Scan...", s)
+	common.LogToServer(common.Log("[+] Finished Member Scan..."), s)
 
-	common.LogAndSend(fmt.Sprintf("[+] Got %v Deletion Candidates from Guild %v!\n", len(candidates), g.ID), s)
+	common.LogToServer(common.Log("[+] Got %v Deletion Candidates from Guild %v!\n", len(candidates), g.ID), s)
 
-	common.LogAndSend("[+] Scanning verification channel messages.", s)
+	common.LogToServer(common.Log("[+] Scanning verification channel messages."), s)
 
 	// Processes the last 1000 messages (in batches of 100) in reverse-chronological order.
 	// Adds them to the list of the members having messages (read: interacted).
@@ -92,9 +92,9 @@ func PurgeVerification(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		lastMessageID = messages[len(messages)-1].ID
 
 		if messagesProcessed == 100 {
-			counterMessageID = common.LogAndSend(fmt.Sprintf("\tGot %v messages (%v/%v)!", len(messages), messagesProcessed, messageLimit), s)
+			counterMessageID = common.LogToServer(common.Log("\tGot %v messages (%v/%v)!", len(messages), messagesProcessed, messageLimit), s)
 		} else {
-			common.LogAndSend(fmt.Sprintf("\tGot %v messages (%v/%v)!", len(messages), messagesProcessed, messageLimit), s, "")
+			common.LogToServer(common.Log("\tGot %v messages (%v/%v)!", len(messages), messagesProcessed, messageLimit), s)
 			if *common.DebugChannelID != "" {
 				s.ChannelMessageEdit(*common.DebugChannelID, counterMessageID, fmt.Sprintf("\tGot %v messages (%v/%v)!", len(messages), messagesProcessed, messageLimit))
 			}
@@ -111,9 +111,9 @@ func PurgeVerification(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		timeLastSeen[k] = v
 	}
 
-	common.LogAndSend(fmt.Sprintf("[+] Got %v members having posted a message.", len(timeLastSeen)), s)
+	common.LogToServer(common.Log("[+] Got %v members having posted a message.", len(timeLastSeen)), s)
 
-	common.LogAndSend("[∨] Starting Candidate Filtering...", s)
+	common.LogToServer(common.Log("[∨] Starting Candidate Filtering..."), s)
 
 	now := time.Now()
 	kickDate := now.Add(-7 * 24 * time.Hour)
@@ -127,11 +127,11 @@ func PurgeVerification(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			candidatesWarn = append(candidatesWarn, c)
 		}
 	}
-	common.LogAndSend("[+] Finished Candidate Filtering...", s)
+	common.LogToServer(common.Log("[+] Finished Candidate Filtering..."), s)
 
 	// DMs and Kicks the candidates.
 	for _, candidate := range candidatesKick {
-		common.LogAndSend(fmt.Sprintf("[----] User %v will be kicked. Last interaction: <t:%v:f>", candidate.User.Username, timeLastSeen[candidate.User.ID].Unix()), s)
+		common.LogToServer(common.Log("[----] User %v will be kicked. Last interaction: <t:%v:f>", candidate.User.Username, timeLastSeen[candidate.User.ID].Unix()), s)
 
 		sendDMToUser(candidate, s)
 		kickUser(candidate, s)
@@ -139,7 +139,7 @@ func PurgeVerification(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	// Generate the warn message for the warned candidates.
 	for _, candidate := range candidatesWarn {
-		common.LogAndSend(fmt.Sprintf("[----] User %v will be warned. Last interaction: <t:%v:f>", candidate.User.Username, timeLastSeen[candidate.User.ID].Unix()), s)
+		common.LogToServer(common.Log("[----] User %v will be warned. Last interaction: <t:%v:f>", candidate.User.Username, timeLastSeen[candidate.User.ID].Unix()), s)
 	}
 
 	if len(candidatesWarn) > 0 {
@@ -148,7 +148,7 @@ func PurgeVerification(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	// Writes a report to the specified mod-action-logs channel.
 	sendModActionLogsMessage(candidatesKick, candidatesWarn, s)
-	common.LogAndSend("[✓] Done!", s)
+	common.LogToServer(common.Log("[✓] Done!"), s)
 }
 
 // Generates and posts the warn message.
@@ -169,7 +169,7 @@ func warnUsers(candidatesWarn []discordgo.Member, timeLastSeen map[string]time.T
 func sendDMToUser(candidateKick discordgo.Member, s *discordgo.Session) (bool, error) {
 	dmChannel, err := s.UserChannelCreate(candidateKick.User.ID)
 	if err != nil {
-		common.LogAndSend(fmt.Sprintf("Could not DM user %v", candidateKick.User.ID), s)
+		common.LogToServer(common.Log("Could not DM user %v", candidateKick.User.ID), s)
 		return err != nil, err
 	}
 
@@ -190,7 +190,7 @@ func kickUser(candidateKick discordgo.Member, s *discordgo.Session) (bool, error
 // Writes an itemized message in #mod-action-logs.
 func sendModActionLogsMessage(candidatesKick []discordgo.Member, warnedUsers []discordgo.Member, s *discordgo.Session) {
 	if len(*common.ModActionLogsThreadID) == 0 {
-		log.Printf("Channel ModActionLogs not set, skipping message.")
+		common.Log("Channel ModActionLogs not set, skipping message.")
 		return
 	}
 	formattedUsers := ""

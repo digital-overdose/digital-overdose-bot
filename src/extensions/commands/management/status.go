@@ -1,8 +1,6 @@
 package extensions
 
 import (
-	"fmt"
-
 	"atomicmaya.me/digital-overdose-bot/src/common"
 	"github.com/bwmarrin/discordgo"
 )
@@ -18,6 +16,6 @@ func BotStatus(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	// TODO
 
-	common.LogAndSend(fmt.Sprintf("[⚠] Bot status info executed by `%s`"), s)
+	common.LogToServer(common.Log("[⚠] Bot status info executed by `%s`", common.FormatUsername(i.User)), s)
 
 }

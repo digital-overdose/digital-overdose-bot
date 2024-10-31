@@ -1,8 +1,6 @@
 package extensions
 
 import (
-	"fmt"
-
 	"atomicmaya.me/digital-overdose-bot/src/common"
 	"github.com/bwmarrin/discordgo"
 )
@@ -18,6 +16,6 @@ func ServerStats(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	// TODO FINISH
 
-	common.LogAndSend(fmt.Sprintf("[⚠] Stats of `%s` executed by `%s`", *common.GuildID, i.User.ID), s)
+	common.LogToServer(common.Log("[⚠] Stats of `%s` executed by `%s`", *common.GuildID, common.FormatUsername(i.User)), s)
 
 }

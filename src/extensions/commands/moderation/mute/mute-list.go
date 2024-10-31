@@ -31,7 +31,7 @@ func ListMutes(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	member, err := s.GuildMember(*common.GuildID, user.UserValue(nil).ID)
 
 	if err != nil {
-		common.LogAndSend(fmt.Sprintf("[x] Could not retrieve mute list for (ID: %v) because `%v`", user.UserValue(nil).ID, err), s)
+		common.LogToServer(common.Log("[x] Could not retrieve mute list for (ID: %v) because `%v`", user.UserValue(nil).ID, err), s)
 	}
 
 	log.Printf("[+] Retrieving mutes for member '%v#%v' (ID: %v)", member.User.Username, member.User.Discriminator, member.User.ID)
@@ -39,7 +39,7 @@ func ListMutes(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	// listMutes, err := getMutes(member.User.ID)
 	err = fmt.Errorf("DEPRECATED FUNCTION")
 	if err != nil {
-		log.Printf("[x] Could not retrieve Mutes from database for member '%v#%v' (ID: %v) because '%v'", member.User.Username, member.User.Discriminator, member.User.ID, err)
+		common.LogToServer(common.Log("[x] Could not retrieve Mutes from database for member '%v#%v' (ID: %v) because '%v'", member.User.Username, member.User.Discriminator, member.User.ID, err), s)
 		return
 	}
 

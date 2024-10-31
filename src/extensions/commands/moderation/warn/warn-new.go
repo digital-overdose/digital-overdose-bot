@@ -28,7 +28,7 @@ func Warn(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	}
 
 	err := fmt.Errorf("DEPRECATED FUNCTION")
-	common.LogAndSend(fmt.Sprintf("Could not warn: (ID: %v) because `%v`", user.UserValue(nil).ID, err), s)
+	common.LogToServer(common.Log("Could not warn: (ID: %v) because `%v`", user.UserValue(nil).ID, err), s)
 
 	// reason := ""
 	// opt_reason, reasonIsSet := optionMap["reason"]

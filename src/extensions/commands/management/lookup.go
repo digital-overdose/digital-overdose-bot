@@ -1,8 +1,6 @@
 package extensions
 
 import (
-	"fmt"
-
 	"atomicmaya.me/digital-overdose-bot/src/common"
 	"github.com/bwmarrin/discordgo"
 )
@@ -33,7 +31,7 @@ func LookupMember(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		userID = user.UserValue(nil).ID
 	}
 
-	common.LogAndSend(fmt.Sprintf("[⚠] Lookup of `%s` executed by `%s`", userID, common.FormatUsername(i.User)), s)
+	common.LogToServer(common.Log("[⚠] Lookup of `%s` executed by `%s`", userID, common.FormatUsername(i.User)), s)
 
 	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,

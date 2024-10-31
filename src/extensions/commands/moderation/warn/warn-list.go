@@ -29,7 +29,7 @@ func ListWarns(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	}
 
 	err := fmt.Errorf("DEPRECATED FUNCTION")
-	common.LogAndSend(fmt.Sprintf("Could not list warns: (ID: %v) because `%v`", user.UserValue(nil).ID, err), s)
+	common.LogToServer(common.Log("Could not list warns: (ID: %v) because `%v`", user.UserValue(nil).ID, err), s)
 
 	// member, err := s.GuildMember(*common.GuildID, user.UserValue(nil).ID)
 

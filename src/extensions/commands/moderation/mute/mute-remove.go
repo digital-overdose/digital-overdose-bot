@@ -3,7 +3,6 @@ package extensions
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 
 	"atomicmaya.me/digital-overdose-bot/src/common"
 	"github.com/bwmarrin/discordgo"
@@ -30,7 +29,7 @@ func UnmuteManual(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	}
 
 	err := fmt.Errorf("DEPRECATED FUNCTION")
-	common.LogAndSend(fmt.Sprintf("Could not unmute: (ID: %v) because `%v`", user.UserValue(nil).ID, err), s)
+	common.LogToServer(common.Log("Could not unmute: (ID: %v) because `%v`", user.UserValue(nil).ID, err), s)
 
 	// member, err := s.GuildMember(*common.GuildID, user.UserValue(nil).ID)
 	// if err != nil {
@@ -60,7 +59,7 @@ func UnmuteManual(s *discordgo.Session, i *discordgo.InteractionCreate) {
 func UnmuteAutomated(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	// This command can abort early, saving CPU processing power aka. money.
 	if ActiveMutesRegistered == 0 {
-		log.Printf("[🕑] No recent mutes, cron job aborting.")
+		common.LogToServer(common.Log("[🕑] No recent mutes, cron job aborting."), s)
 		return
 	}
 
@@ -114,18 +113,18 @@ func restoreUser(s *discordgo.Session, userID string, roles_encoded string, mute
 	var roles []string
 	err := json.Unmarshal([]byte(roles_encoded), &roles)
 	if err != nil {
-		common.LogAndSend(fmt.Sprintf("[❌] ERROR: Unmute - Roles Unmarshaling - '%v'", err), s)
+		common.LogToServer(common.Log("[❌] ERROR: Unmute - Roles Unmarshaling - '%v'", err), s)
 	}
 
 	err = s.GuildMemberRoleRemove(*common.GuildID, userID, *common.MuteRoleID)
 	if err != nil {
-		common.LogAndSend(fmt.Sprintf("[❌] ERROR: Unmute - Removing 'Timeout' Role - '%v'", err), s)
+		common.LogToServer(common.Log("[❌] ERROR: Unmute - Removing 'Timeout' Role - '%v'", err), s)
 	}
 
 	for _, r := range roles {
 		err = s.GuildMemberRoleAdd(*common.GuildID, userID, r)
 		if err != nil {
-			common.LogAndSend(fmt.Sprintf("[❌] ERROR: Unmute - Adding Role `%v` - '%v'", r, err), s)
+			common.LogToServer(common.Log("[❌] ERROR: Unmute - Adding Role `%v` - '%v'", r, err), s)
 		}
 	}
 

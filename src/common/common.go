@@ -51,7 +51,7 @@ func LoadEnvOrFlags() {
 	env, err := godotenv.Read("./env/.env")
 
 	if err != nil {
-		log.Println("Error loading .env file, relying on flags.")
+		Log("Error loading .env file, relying on flags.")
 	} else {
 		_ = godotenv.Load()
 
@@ -96,7 +96,7 @@ func SendMessage(s *discordgo.Session, channel string, message string) {
 	if channel != "" {
 		s.ChannelMessageSend(channel, message)
 	} else {
-		log.Printf("[❌] ERROR - Could not send message to channel because it is undefined.")
+		Log("[❌] ERROR - Could not send message to channel because it is undefined.")
 	}
 }
 
@@ -104,7 +104,7 @@ func SendEmbed(s *discordgo.Session, channel string, message *discordgo.MessageE
 	if channel != "" {
 		s.ChannelMessageSendEmbed(channel, message)
 	} else {
-		log.Printf("[❌] ERROR - Could not send message to channel because it is undefined.")
+		Log("[❌] ERROR - Could not send message to channel because it is undefined.")
 	}
 }
 

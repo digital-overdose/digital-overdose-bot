@@ -54,7 +54,7 @@ func init() {
 	err := errors.New("")
 	database_utils.Database, err = database_utils.InitializeDatabase()
 	if err != nil {
-		log.Printf("DB INIT failed. ERR: %v", err)
+		common.Log("DB INIT failed. ERR: %v", err)
 		os.Exit(125)
 	}
 }
@@ -77,18 +77,18 @@ func init() {
 		schedulers[i] = gocron.NewScheduler(time.UTC)
 		job := cron.CronJobs[i]
 
-		log.Printf("[--] Registered job '%v': '%v'", job.Name, job.CronString)
+		common.Log("[--] Registered job '%v': '%v'", job.Name, job.CronString)
 		schedulers[i].Cron(job.CronString).Do(func() {
-			log.Printf("[+] Executing cron job '%v': '%v'", job.Name, job.CronString)
+			common.Log("[+] Executing cron job '%v': '%v'", job.Name, job.CronString)
 			job.Job(s, nil)
 		})
 		schedulers[i].StartAsync()
 	}
 
-	log.Print("[✓] Registering Jobs")
+	common.Log("[✓] Registering Jobs")
 
 	// Start the cron scheduler in another thread.
-	log.Print("[✓] cron handler Started")
+	common.Log("[✓] cron handler Started")
 }
 
 // Entry point, loads system and performs clean-up
@@ -99,7 +99,7 @@ func main() {
 		log.Fatalf("Cannot open the session: %v", err)
 	}
 
-	log.Println("Adding commands...")
+	common.Log("Adding commands...")
 	registeredCommands := make([]*discordgo.ApplicationCommand, len(extensions.Commands))
 
 	// Registers all of the commands in the designated server.
@@ -109,16 +109,16 @@ func main() {
 			log.Panicf("Cannot create '%v' command: %v", v.Name, err)
 		}
 		registeredCommands[i] = cmd
-		log.Printf("Added command '%v'\n", v.Name)
+		common.Log("Added command '%v'\n", v.Name)
 	}
 	defer s.Close()
 
 	// CTRL+C Signal Handler
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
-	log.Println("Press Ctrl+C to exit")
+	common.Log("Press Ctrl+C to exit")
 
-	common.LogAndSend(fmt.Sprintf(":robot::rotating_light: is currently running on version `%v%v", common.VERSION, func() string {
+	common.LogToServer(fmt.Sprintf(":robot::rotating_light: is currently running on version `%v%v", common.VERSION, func() string {
 		if *common.CURRENTLY_DEV {
 			return " (DEV VERSION)`"
 		} else {
@@ -128,19 +128,19 @@ func main() {
 
 	<-stop
 
-	_, err = (*database_utils.Database).Methods.InsertOpsEvent.Exec(database_utils.SYSTEM_STOP, time.Now(), nil)
+	_, err = (*database_utils.Database).Methods.InsertOpsEvent.Exec(database_utils.SYSTEM_STOP, time.Now(), "Graceful exit.")
 
 	// Unregisters the commands in the designated server.
 	if *common.RemoveCommands {
-		log.Println("Removing commands...")
+		common.Log("Removing commands...")
 		for _, v := range registeredCommands {
 			s.ApplicationCommandDelete(s.State.User.ID, *common.GuildID, v.ID)
 			if err != nil {
 				log.Panicf("Cannot delete '%v' command: %v", v.Name, err)
 			}
-			log.Printf("Removed command '%v'\n", v.Name)
+			common.Log("Removed command '%v'\n", v.Name)
 		}
 	}
 
-	log.Printf("Gracefully shutting down.")
+	common.Log("Gracefully shutting down.")
 }

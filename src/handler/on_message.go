@@ -2,7 +2,6 @@ package handler
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"atomicmaya.me/digital-overdose-bot/src/common"
@@ -13,7 +12,7 @@ import (
 func OnMessage(s *discordgo.Session, m *discordgo.MessageCreate) {
 	channel, err := s.Channel(m.ChannelID)
 	if err != nil {
-		log.Printf("ERROR IN ONMESSAGE: %v", err)
+		common.Log("ERROR IN ONMESSAGE: %v", err) // TODO BETTER LOGGING
 	}
 
 	_, err = (*database_utils.Database).Methods.InsertUserEvent.Exec(
@@ -21,17 +20,17 @@ func OnMessage(s *discordgo.Session, m *discordgo.MessageCreate) {
 		time.Now(),
 		m.Author.ID, common.FormatUsername(m.Author),
 		channel.ID, fmt.Sprintf("#%v (<#%v>)", channel.Name, channel.ID),
-		fmt.Sprintf("ID %v\nContent (%d): '%v'", m.ID, len(m.Content), common.EncodeMessage(m.Content, 100)),
+		fmt.Sprintf("ID %v\nContent (%d): '%v'", m.ID, len(m.Content), common.EncodeMessage(m.Content, 50)),
 	)
 	if err != nil {
-		log.Printf("ERROR IN ONMESSAGE: %v", err)
+		common.Log("ERROR IN ONMESSAGE: %v", err) // TODO BETTER LOGGING
 	}
 }
 
 func OnMessageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 	channel, err := s.Channel(m.ChannelID)
 	if err != nil {
-		log.Printf("ERROR IN ONMESSAGEUPDATE: %v", err)
+		common.Log("ERROR IN ONMESSAGEUPDATE: %v", err) // TODO BETTER LOGGING
 	}
 
 	_, err = (*database_utils.Database).Methods.InsertUserEvent.Exec(
@@ -39,29 +38,39 @@ func OnMessageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 		time.Now(),
 		m.Author.ID, common.FormatUsername(m.Author),
 		channel.ID, fmt.Sprintf("#%v (<#%v>)", channel.Name, channel.ID),
-		fmt.Sprintf("ID %v\nContent (%d): '%v'", m.ID, len(m.Content), common.EncodeMessage(m.Content, 100)),
+		fmt.Sprintf("ID %v\nContent (%d): '%v'", m.ID, len(m.Content), common.EncodeMessage(m.Content, 50)),
 	)
 	if err != nil {
-		log.Printf("ERROR IN ONMESSAGEUPDATE: %v", err)
+		common.Log("ERROR IN ONMESSAGEUPDATE: %v", err) // TODO FIX
 	}
 }
 
 func OnMessageDelete(s *discordgo.Session, m *discordgo.MessageDelete) {
 	channel, err := s.Channel(m.ChannelID)
 	if err != nil {
-		log.Printf("ERROR IN ONMESSAGEDELETE: %v", err)
+		common.Log("ERROR IN ONMESSAGEDELETE: %v", err) // TODO BETTER LOGGING
 	}
 
-	fmt.Printf("%+v\n", m)
+	message := m.BeforeDelete
+	if message == nil {
+		_, err = (*database_utils.Database).Methods.InsertUserEvent.Exec(
+			database_utils.USER_MESSAGE_DELETE,
+			time.Now(),
+			"-1", "UNKNOWN",
+			channel.ID, fmt.Sprintf("#%v (<#%v>)", channel.Name, channel.ID),
+			fmt.Sprintf("CONTENT UNKNOWN - ID %v/%v/%v", m.GuildID, m.ChannelID, m.ID),
+		)
+	} else {
+		_, err = (*database_utils.Database).Methods.InsertUserEvent.Exec(
+			database_utils.USER_MESSAGE_DELETE,
+			time.Now(),
+			message.Author.ID, common.FormatUsername(message.Author),
+			channel.ID, fmt.Sprintf("#%v (<#%v>)", channel.Name, channel.ID),
+			fmt.Sprintf("ID %v\nContent (%d): '%v'", message.ID, len(message.Content), common.EncodeMessage(message.Content, 50)),
+		)
+	}
 
-	_, err = (*database_utils.Database).Methods.InsertUserEvent.Exec(
-		database_utils.USER_MESSAGE_DELETE,
-		time.Now(),
-		m.Author.ID, common.FormatUsername(m.Author),
-		channel.ID, fmt.Sprintf("#%v (<#%v>)", channel.Name, channel.ID),
-		fmt.Sprintf("ID %v\nContent (%d): '%v'", m.ID, len(m.Content), common.EncodeMessage(m.Content, 100)),
-	)
 	if err != nil {
-		log.Printf("ERROR IN ONMESSAGEDELETE: %v", err)
+		common.Log("ERROR IN ONMESSAGEDELETE: %v", err) // TODO BETTER LOGGING
 	}
 }

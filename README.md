@@ -18,6 +18,7 @@ See [template.env](./env/template.env)
 
 ### Features (Future)
 
+- [ ] Make Database handler async to avoid thread lock.
 - [ ] Cron job to check people that are muted.
 
 - [x] On Join message.
@@ -27,6 +28,7 @@ See [template.env](./env/template.env)
 - [ ] `/unban` ⇾ Unban someone
 - [ ] `/stats` ⇾ Number of people interacting over 2 weeks. Channel usage. Keep message ID in a file? (Cron)
 - [x] Refactor Database schema.
+- [x] Refactor Logging.
 
 #### Reqs
 

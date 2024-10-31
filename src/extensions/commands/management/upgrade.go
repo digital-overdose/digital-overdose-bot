@@ -41,20 +41,20 @@ func BotUpgrade(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	version := opt_version.StringValue()
 
-	common.LogAndSend(fmt.Sprintf("[⚠] Upgrade to version `%v` starting now!", version), s)
-	common.LogAndSend(fmt.Sprintf("---- URL: %v", fmt.Sprintf(*common.UpgradeReleaseURL, version, version)), s)
+	common.LogToServer(common.Log("[⚠] Upgrade to version `%v` starting now!", version), s)
+	common.LogToServer(common.Log("---- URL: %v", fmt.Sprintf(*common.UpgradeReleaseURL, version, version)), s)
 
 	// Downloads the binary.
 	resp, err := grab.Get(".", fmt.Sprintf(*common.UpgradeReleaseURL, version, version))
 	if err != nil {
-		common.LogAndSend(fmt.Sprintf("[x] Error downloading the release: %v", err), s)
+		common.LogToServer(common.Log("[x] Error downloading the release: %v"), s)
 		return
 	}
 
 	// Gets the downloaded filename.
 	exe := resp.Filename
 
-	common.LogAndSend(fmt.Sprintf("[⇑] Successfully downloaded: %v", exe), s)
+	common.LogToServer(common.Log("[⇑] Successfully downloaded: %v", exe), s)
 
 	// Windows binaries specific code.
 	ext := ""
@@ -66,26 +66,26 @@ func BotUpgrade(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	err = os.Rename(fmt.Sprintf("./digital-overdose-bot%v", ext), fmt.Sprintf("./digital-overdose-bot.old%v", ext))
 
 	if err != nil {
-		common.LogAndSend(fmt.Sprintf("[x] Error renaming the old executable: %v", err), s)
+		common.LogToServer(common.Log("[x] Error renaming the old executable: %v", err), s)
 		return
 	}
 
 	// Renames the new executable to the correct path.
-	err = os.Rename(fmt.Sprintf("./%v", exe), fmt.Sprintf("./digital-overdose-bot%v", ext))
+	err = os.Rename(fmt.Sprintf("./%v", exe), fmt.Sprint("./digital-overdose-bot%v", ext))
 	if err != nil {
-		common.LogAndSend(fmt.Sprintf("[x] Error renaming the new executable: %v", err), s)
+		common.LogToServer(common.Log("[x] Error renaming the new executable: %v", err), s)
 		return
 	}
 
-	common.LogAndSend("[+] Renamed executable to expected pattern.", s)
+	common.Log("[+] Renamed executable to expected pattern.", s)
 
 	// Modifies the permissions so that systemd can start it with the same rights.
 	os.Chmod(fmt.Sprintf("./digital-overdose-bot%v", ext), 0755)
 
 	// Removes the old version of the binary.
-	os.Remove(fmt.Sprintf("./digital-overdose-bot.old%v", ext))
-	common.LogAndSend("[+] Removed the outdated executable.", s)
+	os.Remove(fmt.Sprint("./digital-overdose-bot.old%v", ext))
+	common.LogToServer(common.Log("[+] Removed the outdated executable."), s)
 
-	common.LogAndSend("[+] Killing current bot, `systemd` will restart it in 10 seconds.", s)
+	common.LogToServer(common.Log("[+] Killing current bot, `systemd` will restart it in 10 seconds."), s)
 	os.Exit(42)
 }

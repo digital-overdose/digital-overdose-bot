@@ -3,8 +3,8 @@ package database_utils
 import (
 	"database/sql"
 	"fmt"
-	"log"
 
+	"atomicmaya.me/digital-overdose-bot/src/common"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -33,9 +33,9 @@ const createUserEventsTable string = `
 		type INTEGER NOT NULL,
 		time DATETIME NOT NULL,
 		subject_id INTEGER NOT NULL,
-		subject_name VARCHAR(255) NOT NULL,
-		source_id INTEGER,
-		source_name VARCHAR(255),
+		subject_name TEXT NOT NULL,
+		source_id INTEGER NOT NULL,
+		source_name TEXT NOT NULL,
 		data TEXT NOT NULL
 	)
 `
@@ -130,7 +130,7 @@ func InitializeDatabase() (*DatabaseUtilities, error) {
 		return nil, fmt.Errorf("[db.InitializeDatabase] [LookupRolesTrackingLog] %w", err)
 	}
 
-	log.Printf("[+] Database initialized.")
+	common.Log("[+] Database initialized.")
 
 	return &DatabaseUtilities{
 		db: db,
@@ -167,7 +167,7 @@ func InitializeDatabase() (*DatabaseUtilities, error) {
 func getTotalCount(stmt *sql.Stmt) (int, error) {
 	rows, err := stmt.Query()
 	if err != nil {
-		log.Printf("SQL: Could not get warn count because: '%v'", err)
+		common.Log("SQL: Could not get warn count because: '%v'", err)
 	}
 
 	defer rows.Close()

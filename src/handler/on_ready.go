@@ -2,7 +2,6 @@ package handler
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"atomicmaya.me/digital-overdose-bot/src/common"
@@ -11,11 +10,11 @@ import (
 )
 
 func OnReady(s *discordgo.Session, r *discordgo.Ready) {
-	log.Printf("Running in version: v%v", common.VERSION)
-	log.Printf("Logged in as: '%v#%v'", s.State.User.Username, s.State.User.Discriminator)
+	common.Log("Running in version: v%v", common.VERSION)
+	common.Log("Logged in as: '%v'", common.FormatUsername(s.State.User))
 
 	_, err := (*database_utils.Database).Methods.InsertOpsEvent.Exec(database_utils.SYSTEM_START, time.Now(), fmt.Sprintf("Running in version: v%v", common.VERSION))
 	if err != nil {
-		log.Printf("ERROR IN ONREADY: %v", err)
+		common.Log("ERROR IN ONREADY: %v", err)
 	}
 }

@@ -28,7 +28,7 @@ func Unwarn(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	}
 
 	err := fmt.Errorf("DEPRECATED FUNCTION")
-	common.LogAndSend(fmt.Sprintf("Could not mute: (ID: %v) because `%v`", user.UserValue(nil).ID, err), s)
+	common.LogToServer(common.Log("Could not mute: (ID: %v) because `%v`", user.UserValue(nil).ID, err), s)
 
 	// member, err := s.GuildMember(*common.GuildID, user.UserValue(nil).ID)
 	// if err != nil {

@@ -10,5 +10,4 @@ func OnInteractionCreate(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	if h, ok := extensions.CommandHandlers[i.ApplicationCommandData().Name]; ok {
 		h(s, i)
 	}
-
 }
