@@ -1,11 +1,14 @@
 package handler
 
 import (
+	"database/sql"
 	"fmt"
 	"time"
 
 	"atomicmaya.me/digital-overdose-bot/src/common"
-	database_utils "atomicmaya.me/digital-overdose-bot/src/db"
+	"atomicmaya.me/digital-overdose-bot/src/db"
+	"atomicmaya.me/digital-overdose-bot/src/db/db_events"
+	"atomicmaya.me/digital-overdose-bot/src/db/db_instr"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -15,13 +18,22 @@ func OnMessage(s *discordgo.Session, m *discordgo.MessageCreate) {
 		common.Log("ERROR IN ONMESSAGE: %v", err) // TODO BETTER LOGGING
 	}
 
-	_, err = (*database_utils.Database).Methods.InsertUserEvent.Exec(
-		database_utils.USER_MESSAGE_WRITE,
-		time.Now(),
-		m.Author.ID, common.FormatUsername(m.Author),
-		channel.ID, fmt.Sprintf("#%v (<#%v>)", channel.Name, channel.ID),
-		fmt.Sprintf("ID %v\nContent (%d): '%v'", m.ID, len(m.Content), common.EncodeMessage(m.Content, 50)),
-	)
+	db.DatabaseAddToQueue(&db_instr.DatabaseInstruction{
+		InstrType: db_instr.INSERT_USER_EVENT,
+		Params: []any{
+			db_events.USER_MESSAGE_WRITE,
+			time.Now(),
+			m.Author.ID, common.FormatUsername(m.Author),
+			channel.ID, fmt.Sprintf("#%v (<#%v>)", channel.Name, channel.ID),
+			fmt.Sprintf("ID %v\nContent (%d): '%v'", m.ID, len(m.Content), common.EncodeMessage(m.Content, 50)),
+		},
+	})
+
+	response := make(chan *sql.Rows)
+	db.RegisterResponseAwaiter(response)
+
+	res <- response
+
 	if err != nil {
 		common.Log("ERROR IN ONMESSAGE: %v", err) // TODO BETTER LOGGING
 	}
@@ -34,7 +46,7 @@ func OnMessageUpdate(s *discordgo.Session, m *discordgo.MessageUpdate) {
 	}
 
 	_, err = (*database_utils.Database).Methods.InsertUserEvent.Exec(
-		database_utils.USER_MESSAGE_UPDATE,
+		db_events.USER_MESSAGE_UPDATE,
 		time.Now(),
 		m.Author.ID, common.FormatUsername(m.Author),
 		channel.ID, fmt.Sprintf("#%v (<#%v>)", channel.Name, channel.ID),

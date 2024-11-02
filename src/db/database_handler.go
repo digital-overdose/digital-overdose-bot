@@ -1,45 +1,24 @@
-package database_utils
+package db
 
 import (
 	"database/sql"
 	"fmt"
 
+	"atomicmaya.me/digital-overdose-bot/src/db/db_instr"
 	"github.com/google/uuid"
 )
 
-var DatabaseSink = make(chan *DatabaseInstruction)
+var DatabaseSink = make(chan *db_instr.DatabaseInstruction)
+var DatabaseShutdownHook = make(chan int)
 
 // Is this secure? No.
 // Could this memory leak? Yes.
 // Am I going to write something to avoid this? Probably.
 // TODO
-var DatabaseResponses map[uuid.UUID]*sql.Rows
+var databaseResponses map[uuid.UUID]*sql.Rows
 
-type InstrType int
+var RegisterResponseAwaiter(channel chan, id, uuid.uuid) {
 
-const (
-	INSERT_USER_EVENT InstrType = 0x00
-
-	LOOKUP_USER_EVENT_ALL       InstrType = 0x10
-	LOOKUP_USER_EVENT_IMPORTANT InstrType = 0x11
-	LOOKUP_USER_EVENT_SERVER    InstrType = 0x12
-	LOOKUP_USER_EVENT_STATS     InstrType = 0x13
-
-	INSERT_OPS_EVENT InstrType = 0x30
-
-	LOOKUP_OPS_EVENT_ALL       InstrType = 0x40
-	LOOKUP_OPS_EVENT_IMPORTANT InstrType = 0x41
-
-	INSERT_ROLE_TRACKING InstrType = 0x60
-
-	LOOKUP_ROLE_TRACKING InstrType = 0x70
-)
-
-// Tries to formalise the approach to be able to pipe instructions to a channel.
-type DatabaseInstruction struct {
-	ID        uuid.UUID
-	InstrType *InstrType
-	Params    []any
 }
 
 func InitializeDatabaseSink() error {
@@ -47,13 +26,20 @@ func InitializeDatabaseSink() error {
 	return fmt.Errorf("not implemented")
 }
 
+func DatabaseAddToQueue(instr *db_instr.DatabaseInstruction) uuid.UUID {
+	instr.ID = uuid.New()
+	DatabaseSink <- instr
+	return instr.ID
+}
+
 func databaseInstructionAccumulator() {
 	handlerRunning := true
 	retryCounter := 0
 	for handlerRunning {
 		instr := <-DatabaseSink
-		if instr.InstrType == nil {
+		if instr.InstrType == -1 {
 			handlerRunning = false
+			DatabaseShutdownHook <- 1
 		} else {
 			if res, err := databaseInstructionHandler(instr); err != nil {
 				if retryCounter < 3 {
@@ -70,29 +56,29 @@ func databaseInstructionAccumulator() {
 	}
 }
 
-func databaseInstructionHandler(instr *DatabaseInstruction) (*sql.Rows, error) {
+func databaseInstructionHandler(instr *db_instr.DatabaseInstruction) (*sql.Rows, error) {
 	var stmt *sql.Stmt
 
-	switch *instr.InstrType {
-	case INSERT_USER_EVENT:
+	switch instr.InstrType {
+	case db_instr.INSERT_USER_EVENT:
 		stmt = (*Database).Methods.InsertUserEvent
-	case LOOKUP_USER_EVENT_ALL:
+	case db_instr.LOOKUP_USER_EVENT_ALL:
 		stmt = (*Database).Methods.LookupUserEventsAll
-	case LOOKUP_USER_EVENT_IMPORTANT:
+	case db_instr.LOOKUP_USER_EVENT_IMPORTANT:
 		stmt = (*Database).Methods.LookupUserEventsImportant
-	case LOOKUP_USER_EVENT_SERVER:
+	case db_instr.LOOKUP_USER_EVENT_SERVER:
 		stmt = (*Database).Methods.LookupUserEventsServer
-	case LOOKUP_USER_EVENT_STATS:
+	case db_instr.LOOKUP_USER_EVENT_STATS:
 		stmt = (*Database).Methods.LookupUserEventsStats
-	case INSERT_OPS_EVENT:
+	case db_instr.INSERT_OPS_EVENT:
 		stmt = (*Database).Methods.InsertOpsEvent
-	case LOOKUP_OPS_EVENT_ALL:
+	case db_instr.LOOKUP_OPS_EVENT_ALL:
 		stmt = (*Database).Methods.LookupOpsEventsAll
-	case LOOKUP_OPS_EVENT_IMPORTANT:
+	case db_instr.LOOKUP_OPS_EVENT_IMPORTANT:
 		stmt = (*Database).Methods.LookupOpsEventsImportant
-	case INSERT_ROLE_TRACKING:
+	case db_instr.INSERT_ROLE_TRACKING:
 		stmt = (*Database).Methods.InsertRoleTracking
-	case LOOKUP_ROLE_TRACKING:
+	case db_instr.LOOKUP_ROLE_TRACKING:
 		stmt = (*Database).Methods.LookupRoleTracking
 	}
 

@@ -18,7 +18,9 @@ import (
 
 	"atomicmaya.me/digital-overdose-bot/src/common"
 	cron "atomicmaya.me/digital-overdose-bot/src/cron"
-	database_utils "atomicmaya.me/digital-overdose-bot/src/db"
+	"atomicmaya.me/digital-overdose-bot/src/db"
+	"atomicmaya.me/digital-overdose-bot/src/db/db_events"
+	"atomicmaya.me/digital-overdose-bot/src/db/db_instr"
 	"atomicmaya.me/digital-overdose-bot/src/extensions"
 	"atomicmaya.me/digital-overdose-bot/src/handler"
 	"github.com/bwmarrin/discordgo"
@@ -52,12 +54,12 @@ func init() {
 
 func init() {
 	err := errors.New("")
-	database_utils.Database, err = database_utils.InitializeDatabase()
+	db.Database, err = db.InitializeDatabase()
 	if err != nil {
 		common.Log("DB INIT failed. ERR: %v", err)
 		os.Exit(125)
 	}
-	database_utils.InitializeDatabaseSink()
+	db.InitializeDatabaseSink()
 }
 
 func init() {
@@ -129,7 +131,12 @@ func main() {
 
 	<-stop
 
-	_, err = (*database_utils.Database).Methods.InsertOpsEvent.Exec(database_utils.SYSTEM_STOP, time.Now(), "Graceful exit.")
+	db.DatabaseAddToQueue(&db_instr.DatabaseInstruction{
+		InstrType: db_instr.INSERT_OPS_EVENT,
+		Params:    []any{db_events.SYSTEM_STOP, time.Now(), "Graceful exit."},
+	})
+
+	<-db.DatabaseShutdownHook
 
 	// Unregisters the commands in the designated server.
 	if *common.RemoveCommands {
