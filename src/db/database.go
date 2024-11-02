@@ -16,9 +16,9 @@ type DatabaseUtilities struct {
 
 // Stores the various prepared statements that may be made to the database.
 type DatabaseMethods struct {
-	InsertUserEvent, LookupUserEvents, LookupUserEventsImportant, LookupUserEventsServer, LookupUserEventsStats *sql.Stmt
-	InsertOpsEvent, LookupOpsEvents, LookupOpsEventsImportant                                                   *sql.Stmt
-	InsertRoleTracking, LookupRoleTracking                                                                      *sql.Stmt
+	InsertUserEvent, LookupUserEventsAll, LookupUserEventsImportant, LookupUserEventsServer, LookupUserEventsStats *sql.Stmt
+	InsertOpsEvent, LookupOpsEventsAll, LookupOpsEventsImportant                                                   *sql.Stmt
+	InsertRoleTracking, LookupRoleTracking                                                                         *sql.Stmt
 }
 
 // The general container for all database related actions.
@@ -136,13 +136,13 @@ func InitializeDatabase() (*DatabaseUtilities, error) {
 		db: db,
 		Methods: &DatabaseMethods{
 			InsertUserEvent:           insertUserEvent,
-			LookupUserEvents:          lookupUserEventsAll,
+			LookupUserEventsAll:       lookupUserEventsAll,
 			LookupUserEventsImportant: lookupUserEventsImportant,
 			LookupUserEventsServer:    lookupUserEventsServer,
 			LookupUserEventsStats:     lookupUserEventsStats,
 
 			InsertOpsEvent:           insertOpsEvent,
-			LookupOpsEvents:          lookupOpsEventsAll,
+			LookupOpsEventsAll:       lookupOpsEventsAll,
 			LookupOpsEventsImportant: lookupOpsEventsImportant,
 
 			InsertRoleTracking: insertRolesTrackingLog,

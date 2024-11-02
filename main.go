@@ -57,6 +57,7 @@ func init() {
 		common.Log("DB INIT failed. ERR: %v", err)
 		os.Exit(125)
 	}
+	database_utils.InitializeDatabaseSink()
 }
 
 func init() {
